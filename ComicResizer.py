@@ -1,12 +1,25 @@
 import zipfile
 import os
 from PIL import Image
+import shutil
+
+
+# TODOs
+# Implement GIFs
+# Implement covers
+# Implement GUI or shell integration
+# Implement standalone images, not only zips
+# Rar support
 
 
 #--- FUNCTIONS --------------------------
-def AddSuffix(filepath):
-    return (os.path.splitext(path_to_zip_file)[0]) + ".2.zip"
+def IsImage(filename):
+    imgExtensions = [".jpg" , ".jpeg" , ".png" , ".bmp"]
+    extension = (os.path.splitext(filename)[1])
+    return (extension in imgExtensions)
 
+def AddSuffix(filepath):
+    return (os.path.splitext(filepath)[0]) + ".2.zip"
 
 #----------------------------------------
 
@@ -33,17 +46,14 @@ basewidth = 1280
 quality_val = 90
 
 for filename in os.listdir(tempFolder):
-   
-    filepath = os.path.join(tempFolder, filename)
-    img = Image.open(filepath)
-    wpercent = (basewidth/float(img.size[0]))
-    hsize = int((float(img.size[1])*float(wpercent)))
-    img = img.resize((basewidth,hsize), Image.ANTIALIAS)
-    img.save(filepath, 'JPEG', quality=quality_val)
+    if IsImage(filename):
+        filepath = os.path.join(tempFolder, filename)
+        img = Image.open(filepath)
+        wpercent = (basewidth/float(img.size[0]))
+        hsize = int((float(img.size[1])*float(wpercent)))
+        img = img.resize((basewidth,hsize), Image.ANTIALIAS)
+        img.save(filepath, 'JPEG', quality=quality_val)
 
-
-
-#Change format if necessary
 
 
 #Compress
@@ -56,7 +66,11 @@ for dirname, subdirs, files in os.walk(tempFolder):
 zf.close()
 
 
+
 #Delete temp directory
+shutil.rmtree(tempFolder)
+
+
 
 #Rename/delete original file
 
