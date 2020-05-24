@@ -18,8 +18,21 @@ def IsImage(filename):
     extension = (os.path.splitext(filename)[1])
     return (extension in imgExtensions)
 
-def AddSuffix(filepath):
-    return (os.path.splitext(filepath)[0]) + ".2.zip"
+
+#If the file already exists, adds a " (2)" suffix, or higher
+def AddFileExistsIndex(filepath): 
+    if not(os.path.exists(filepath)):
+        return(filepath)
+    else:
+        i = 2
+        filepathWithoutExt = os.path.splitext(filepath)[0]
+        extension          = os.path.splitext(filepath)[1]
+
+        newFilepath = filepathWithoutExt + " (%s)" % i + extension
+        while os.path.exists(newFilepath):
+            i+=1
+            newFilepath = filepathWithoutExt + " (%s)" % i + extension
+        return(newFilepath)
 
 #----------------------------------------
 
@@ -27,20 +40,20 @@ def AddSuffix(filepath):
 
 print("Working...")
 
-path_to_zip_file = 'C:\\Users\\Eduard\\Desktop\\AAA.zip'
+oldFilepath = 'C:\\Users\\Eduard\\Desktop\\AAA.zip'
 
-
+######################################################
 #Prepare temp folder name (it's just the filepath with the extension removed)
-tempFolder = (os.path.splitext(path_to_zip_file)[0])
+tempFolder = (os.path.splitext(oldFilepath)[0])
 
-
+######################################################
 #Extract
-zip_ref = zipfile.ZipFile(path_to_zip_file, 'r')
+zip_ref = zipfile.ZipFile(oldFilepath, 'r')
 zip_ref.extractall(tempFolder)
 zip_ref.close()
 
 
-
+######################################################
 #Resize
 basewidth = 1280
 quality_val = 90
@@ -56,8 +69,15 @@ for filename in os.listdir(tempFolder):
 
 
 
+######################################################
+#Delete original file
+from send2trash import send2trash   #pip install Send2Trash
+#send2trash(oldFilepath)
+
+
+######################################################
 #Compress
-newFilepath = AddSuffix(path_to_zip_file)
+newFilepath = AddFileExistsIndex(oldFilepath)
 zf = zipfile.ZipFile(newFilepath, "w")
 for dirname, subdirs, files in os.walk(tempFolder):
     zf.write(dirname)
@@ -66,14 +86,12 @@ for dirname, subdirs, files in os.walk(tempFolder):
 zf.close()
 
 
-
+######################################################
 #Delete temp directory
 shutil.rmtree(tempFolder)
 
 
-
-#Rename/delete original file
-
+######################################################
 #Rename new file with original filename
 
 
