@@ -41,6 +41,12 @@ def Extract(oldFilePath , tempFolder):
     zip_ref.close()
 
 
+#If image was PNG, remove Alpha channel so that it can be saved as JPG
+def RemoveAlpha(image):
+    if image.mode in ("RGBA", "P"): image = image.convert("RGB")
+    return(image)
+
+
 def ResizeImagesInFolder(tempFolder):
     basewidth = 1280
     quality_val = 90
@@ -49,6 +55,7 @@ def ResizeImagesInFolder(tempFolder):
         if IsImage(filename):
             filepath = os.path.join(tempFolder, filename)
             img = Image.open(filepath)
+            img = RemoveAlpha(img)
             wpercent = (basewidth/float(img.size[0]))
             hsize = int((float(img.size[1])*float(wpercent)))
             img = img.resize((basewidth,hsize), Image.ANTIALIAS)
@@ -74,8 +81,7 @@ Extract(oldFilepath , tempFolder)
 
 ######################################################
 #Resize
-
-
+ResizeImagesInFolder(tempFolder)
 
 
 ######################################################
