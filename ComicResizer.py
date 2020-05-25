@@ -34,7 +34,14 @@ def AddFileExistsIndex(filepath):
             newFilepath = filepathWithoutExt + " (%s)" % i + extension
         return(newFilepath)
 
+
+def Extract(oldFilePath , tempFolder):
+    zip_ref = zipfile.ZipFile(oldFilepath, 'r')
+    zip_ref.extractall(tempFolder)
+    zip_ref.close()
 #----------------------------------------
+
+
 
 
 
@@ -48,9 +55,7 @@ tempFolder = (os.path.splitext(oldFilepath)[0])
 
 ######################################################
 #Extract
-zip_ref = zipfile.ZipFile(oldFilepath, 'r')
-zip_ref.extractall(tempFolder)
-zip_ref.close()
+Extract(oldFilepath , tempFolder)
 
 
 ######################################################
