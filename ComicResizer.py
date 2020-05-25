@@ -39,6 +39,20 @@ def Extract(oldFilePath , tempFolder):
     zip_ref = zipfile.ZipFile(oldFilepath, 'r')
     zip_ref.extractall(tempFolder)
     zip_ref.close()
+
+
+def ResizeImagesInFolder(tempFolder):
+    basewidth = 1280
+    quality_val = 90
+
+    for filename in os.listdir(tempFolder):
+        if IsImage(filename):
+            filepath = os.path.join(tempFolder, filename)
+            img = Image.open(filepath)
+            wpercent = (basewidth/float(img.size[0]))
+            hsize = int((float(img.size[1])*float(wpercent)))
+            img = img.resize((basewidth,hsize), Image.ANTIALIAS)
+            img.save(filepath, 'JPEG', quality=quality_val)
 #----------------------------------------
 
 
@@ -60,17 +74,7 @@ Extract(oldFilepath , tempFolder)
 
 ######################################################
 #Resize
-basewidth = 1280
-quality_val = 90
 
-for filename in os.listdir(tempFolder):
-    if IsImage(filename):
-        filepath = os.path.join(tempFolder, filename)
-        img = Image.open(filepath)
-        wpercent = (basewidth/float(img.size[0]))
-        hsize = int((float(img.size[1])*float(wpercent)))
-        img = img.resize((basewidth,hsize), Image.ANTIALIAS)
-        img.save(filepath, 'JPEG', quality=quality_val)
 
 
 
