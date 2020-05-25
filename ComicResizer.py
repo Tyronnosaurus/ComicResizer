@@ -41,25 +41,55 @@ def Extract(oldFilePath , tempFolder):
     zip_ref.close()
 
 
+'''
+#Original comic will have many pages with the same base width (or very similar), but also very different pages such as covers, double-pages, credits...
+def ChooseOriginalWidth(tempFolder):
+    
+    widths = []
+    #
+    for dirname, subdirs, files in os.walk(tempFolder):
+        for filename in files:
+            if IsImage(os.path.join(tempFolder,filename)):
+                im = Image.open(os.path.join(tempFolder,filename))
+                width, height = im.size
+                widths.append(width)
+    print(widths)
+
+    #
+    mean_width = sum(widths) // len(widths)
+    print(mean_width)
+
+    #Discard too big/small
+'''
+
+
+
 #If image was PNG, remove Alpha channel so that it can be saved as JPG
 def RemoveAlpha(image):
     if image.mode in ("RGBA", "P"): image = image.convert("RGB")
     return(image)
 
 
-def ResizeImagesInFolder(tempFolder):
-    basewidth = 1280
+def ResizeSingleImage(imgPath):
+    newWidth = 1280
     quality_val = 90
+
+    img = Image.open(imgPath)
+    img = RemoveAlpha(img)
+    wpercent = (newWidth/float(img.size[0]))
+    newHeight = int((float(img.size[1])*float(wpercent)))
+    img = img.resize((newWidth,newHeight), Image.ANTIALIAS)
+    img.save(imgPath, 'JPEG', quality=quality_val)
+
+
+
+def ResizeImagesInFolder(tempFolder):
 
     for filename in os.listdir(tempFolder):
         if IsImage(filename):
-            filepath = os.path.join(tempFolder, filename)
-            img = Image.open(filepath)
-            img = RemoveAlpha(img)
-            wpercent = (basewidth/float(img.size[0]))
-            hsize = int((float(img.size[1])*float(wpercent)))
-            img = img.resize((basewidth,hsize), Image.ANTIALIAS)
-            img.save(filepath, 'JPEG', quality=quality_val)
+            imgPath = os.path.join(tempFolder, filename)
+            ResizeSingleImage(imgPath)
+           
 #----------------------------------------
 
 
@@ -81,6 +111,7 @@ Extract(oldFilepath , tempFolder)
 
 ######################################################
 #Resize
+#ChooseOriginalWidth(tempFolder)
 ResizeImagesInFolder(tempFolder)
 
 
