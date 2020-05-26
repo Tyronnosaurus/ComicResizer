@@ -8,15 +8,14 @@ def GetBaseWidth(tempFolder):
     widths = []
     widthsCount = []
     #With all the images, make a list of different width values and a list of each value's occurrence
-    for dirname, subdirs, files in os.walk(tempFolder):
-        for filename in files:
-            if IsImage(os.path.join(tempFolder,filename)):
-                im = Image.open(os.path.join(tempFolder,filename))
-                width = im.width
-                if (width not in widths):
-                    widths.append(width)
-                    widthsCount.append(0)
-                widthsCount[widths.index(width)] += 1
+    for filename in os.listdir(tempFolder):
+        if IsImage(os.path.join(tempFolder,filename)):
+            im = Image.open(os.path.join(tempFolder,filename))
+            width = im.width
+            if (width not in widths):
+                widths.append(width)
+                widthsCount.append(0)
+            widthsCount[widths.index(width)] += 1
     #Get most common width
     i = widthsCount.index(max(widthsCount))
     return (widths[i])
@@ -57,6 +56,8 @@ def ResizeSingleImage(imgPath , oldPageWidth , newWidth):
         resizeRatio = newWidth / oldPageWidth
         newWidth  = int((float(img.width) *float(resizeRatio)))
         newHeight = int((float(img.height)*float(resizeRatio)))
+
+    if (newWidth >= img.width): return 0  #Do not increase size, only reduce
 
     img = img.resize((newWidth,newHeight), Image.ANTIALIAS)
     img.save(imgPath, 'JPEG', quality=90)   #75 is low, 95 is highest
