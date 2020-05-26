@@ -5,6 +5,7 @@ import shutil
 
 
 # TODOs
+# Only reduce size, not increase
 # Implement GIFs
 # Implement covers
 # Implement GUI or shell integration
@@ -41,26 +42,35 @@ def Extract(oldFilePath , tempFolder):
     zip_ref.close()
 
 
-'''
-#Original comic will have many pages with the same base width (or very similar), but also very different pages such as covers, double-pages, credits...
-def ChooseOriginalWidth(tempFolder):
+#Checks equality between x and y allowing for some tolerance (t between 0 & 1, relative to y)
+def IsEqualWithRelTol(x , y , t):
+    return (y*(1-t) <= x)  or  (x <= y*(1+t))
+
+
+#Original comic will have many pages with the same width (or very similar), but also very different pages such as covers, double-pages, credits...
+def GetOriginalPageWidth(tempFolder):
     
     widths = []
-    #
+    widthsCount = []
+    
+    #With all the images, make a list of different width values and a list of each value's occurrence
     for dirname, subdirs, files in os.walk(tempFolder):
         for filename in files:
             if IsImage(os.path.join(tempFolder,filename)):
                 im = Image.open(os.path.join(tempFolder,filename))
-                width, height = im.size
-                widths.append(width)
+                width = im.width
+                if (width not in widths):
+                    widths.append(width)
+                    widthsCount.append(0)
+                widthsCount[widths.index(width)] += 1
     print(widths)
+    print(widthsCount)
 
-    #
-    mean_width = sum(widths) // len(widths)
-    print(mean_width)
+    #Get most common width
+    i = widthsCount.index(max(widthsCount))
+    return (widths[i])
 
-    #Discard too big/small
-'''
+
 
 
 
@@ -111,7 +121,7 @@ Extract(oldFilepath , tempFolder)
 
 ######################################################
 #Resize
-#ChooseOriginalWidth(tempFolder)
+print(GetOriginalPageWidth(tempFolder))
 ResizeImagesInFolder(tempFolder)
 
 
