@@ -38,9 +38,7 @@ def Extract(oldFilePath , tempFolder):
     zip_ref.close()
 
 
-#Checks equality between x and y allowing for some tolerance (t between 0 & 1, relative to y)
-def IsEqualWithRelTol(x , y , t):
-    return (y*(1-t) <= x)  or  (x <= y*(1+t))
+
 
 
 

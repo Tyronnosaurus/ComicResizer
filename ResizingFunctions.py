@@ -30,6 +30,7 @@ def IsImage(filename):
     return (extension in imgExtensions)
     
 
+
 #Remove Alpha channel (transparency layer in PNG) so that it can be saved as JPG
 def RemoveAlpha(image):
     if image.mode in ("RGBA", "P"): image = image.convert("RGB")
@@ -37,13 +38,28 @@ def RemoveAlpha(image):
 
 
 
-def ResizeSingleImage(imgPath , oldWidth , newWidth):
-    quality_val = 90
+#Checks if x equals y or is relatively close (t between 0 & 1, relative to y)
+def IsEqualOrClose(x , y , t):
+    return (y*(1-t) <= x)  &  (x <= y*(1+t))
+
+
+
+def ResizeSingleImage(imgPath , oldPageWidth , newWidth):
+    quality_val = 90    #75 is low, 95 is highest
 
     img = Image.open(imgPath)
     img = RemoveAlpha(img)
-    wpercent = (newWidth/float(img.size[0]))
-    newHeight = int((float(img.size[1])*float(wpercent)))
+
+    #Case 1: this is a normal page with the usual width
+    if IsEqualOrClose(img.width , oldPageWidth , 0.02):
+        resizeRatio = (newWidth/float(img.width))
+        newHeight = int((float(img.height)*float(resizeRatio)))
+    #Case 2: this is a double-page, a crop, or any other size related exception -> 
+    else:
+        resizeRatio = newWidth / oldPageWidth
+        newWidth  = int((float(img.width) *float(resizeRatio)))
+        newHeight = int((float(img.height)*float(resizeRatio)))
+
     img = img.resize((newWidth,newHeight), Image.ANTIALIAS)
     img.save(imgPath, 'JPEG', quality=quality_val)
 
