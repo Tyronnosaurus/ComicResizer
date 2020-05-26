@@ -1,50 +1,16 @@
-import zipfile
+
 import os
 import shutil
-from ResizingFunctions import *
+from ResizingFunctions import ResizeImagesInFolder
+from CompressionFunctions import *
 
 # TODOs
 # Only reduce size, not increase
 # Implement GIFs
-# Implement covers
 # Implement GUI or shell integration
 # Implement standalone images, not only zips
 # Rar support
-
-
-#--- FUNCTIONS --------------------------
-
-
-
-#If the file already exists, adds a " (2)" suffix, or higher
-def AddFileExistsIndex(filepath): 
-    if not(os.path.exists(filepath)):
-        return(filepath)
-    else:
-        i = 2
-        filepathWithoutExt = os.path.splitext(filepath)[0]
-        extension          = os.path.splitext(filepath)[1]
-
-        newFilepath = filepathWithoutExt + " (%s)" % i + extension
-        while os.path.exists(newFilepath):
-            i+=1
-            newFilepath = filepathWithoutExt + " (%s)" % i + extension
-        return(newFilepath)
-
-
-def Extract(oldFilePath , tempFolder):
-    zip_ref = zipfile.ZipFile(oldFilepath, 'r')
-    zip_ref.extractall(tempFolder)
-    zip_ref.close()
-
-
-
-
-
-
-           
-#----------------------------------------
-
+# If all files inside a root folder, move them to root
 
 
 
@@ -75,18 +41,12 @@ from send2trash import send2trash   #pip install Send2Trash
 
 ######################################################
 #Compress
-newFilepath = AddFileExistsIndex(oldFilepath)
-zf = zipfile.ZipFile(newFilepath, "w")
-for dirname, subdirs, files in os.walk(tempFolder):
-    zf.write(dirname)
-    for filename in files:
-        zf.write(os.path.join(dirname, filename))
-zf.close()
+Zip(tempFolder , oldFilepath)
 
 
 ######################################################
 #Delete temp directory
-shutil.rmtree(tempFolder)
+#shutil.rmtree(tempFolder)
 
 
 ######################################################
