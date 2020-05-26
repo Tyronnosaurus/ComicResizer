@@ -1,8 +1,7 @@
 import zipfile
 import os
-from PIL import Image
 import shutil
-
+from ResizingFunctions import *
 
 # TODOs
 # Only reduce size, not increase
@@ -14,10 +13,7 @@ import shutil
 
 
 #--- FUNCTIONS --------------------------
-def IsImage(filename):
-    imgExtensions = [".jpg" , ".jpeg" , ".png" , ".bmp"]
-    extension = (os.path.splitext(filename)[1])
-    return (extension in imgExtensions)
+
 
 
 #If the file already exists, adds a " (2)" suffix, or higher
@@ -47,61 +43,9 @@ def IsEqualWithRelTol(x , y , t):
     return (y*(1-t) <= x)  or  (x <= y*(1+t))
 
 
-#Original comic will have many pages with the same width (or very similar), but also very different pages such as covers, double-pages, credits...
-def GetOriginalPageWidth(tempFolder):
-    
-    widths = []
-    widthsCount = []
-    
-    #With all the images, make a list of different width values and a list of each value's occurrence
-    for dirname, subdirs, files in os.walk(tempFolder):
-        for filename in files:
-            if IsImage(os.path.join(tempFolder,filename)):
-                im = Image.open(os.path.join(tempFolder,filename))
-                width = im.width
-                if (width not in widths):
-                    widths.append(width)
-                    widthsCount.append(0)
-                widthsCount[widths.index(width)] += 1
-    print(widths)
-    print(widthsCount)
 
-    #Get most common width
-    i = widthsCount.index(max(widthsCount))
-    return (widths[i])
-
-
-
-
-
-#If image was PNG, remove Alpha channel so that it can be saved as JPG
-def RemoveAlpha(image):
-    if image.mode in ("RGBA", "P"): image = image.convert("RGB")
-    return(image)
-
-
-def ResizeSingleImage(imgPath):
-    newWidth = 1280
-    quality_val = 90
-
-    img = Image.open(imgPath)
-    img = RemoveAlpha(img)
-    wpercent = (newWidth/float(img.size[0]))
-    newHeight = int((float(img.size[1])*float(wpercent)))
-    img = img.resize((newWidth,newHeight), Image.ANTIALIAS)
-    img.save(imgPath, 'JPEG', quality=quality_val)
-
-
-
-def ResizeImagesInFolder(tempFolder):
-
-    for filename in os.listdir(tempFolder):
-        if IsImage(filename):
-            imgPath = os.path.join(tempFolder, filename)
-            ResizeSingleImage(imgPath)
            
 #----------------------------------------
-
 
 
 
@@ -121,8 +65,8 @@ Extract(oldFilepath , tempFolder)
 
 ######################################################
 #Resize
-print(GetOriginalPageWidth(tempFolder))
-ResizeImagesInFolder(tempFolder)
+newWidth = 1280
+ResizeImagesInFolder(tempFolder , newWidth)
 
 
 ######################################################
