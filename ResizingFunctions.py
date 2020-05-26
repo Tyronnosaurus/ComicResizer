@@ -45,8 +45,6 @@ def IsEqualOrClose(x , y , t):
 
 
 def ResizeSingleImage(imgPath , oldPageWidth , newWidth):
-    quality_val = 90    #75 is low, 95 is highest
-
     img = Image.open(imgPath)
     img = RemoveAlpha(img)
 
@@ -61,7 +59,7 @@ def ResizeSingleImage(imgPath , oldPageWidth , newWidth):
         newHeight = int((float(img.height)*float(resizeRatio)))
 
     img = img.resize((newWidth,newHeight), Image.ANTIALIAS)
-    img.save(imgPath, 'JPEG', quality=quality_val)
+    img.save(imgPath, 'JPEG', quality=90)   #75 is low, 95 is highest
 
 
 
