@@ -2,24 +2,19 @@ import os
 from PIL import Image
 
 
-
-#Original comic will have many pages with the same width (or very similar), but also very different pages such as covers, double-pages, credits...
+#Original comic will have many pages with the same pixel width (or very similar), but also very different pages such as covers, double-pages, credits...
+#This function finds the most common width
 def GetBaseWidth(tempFolder):
-    widths = []
-    widthsCount = []
-    #With all the images, make a list of different width values and a list of each value's occurrence
+    widthsCount = {}    #Dictionary storing pairs of (pixelWidht : ammountOfPagesFound)
     for filename in os.listdir(tempFolder):
         if IsImage(os.path.join(tempFolder,filename)):
-            im = Image.open(os.path.join(tempFolder,filename))
-            width = im.width
-            if (width not in widths):
-                widths.append(width)
-                widthsCount.append(0)
-            widthsCount[widths.index(width)] += 1
-    #Get most common width
-    i = widthsCount.index(max(widthsCount))
-    return (widths[i])
-
+            img = Image.open(os.path.join(tempFolder,filename))
+            if (img.width not in widthsCount):  #If width not yet in dictionary, add it with ammount 0
+                widthsCount[img.width] = 0
+            widthsCount[img.width] += 1
+    #Return most common width
+    print(widthsCount)
+    return(max(widthsCount))
 
 
 
