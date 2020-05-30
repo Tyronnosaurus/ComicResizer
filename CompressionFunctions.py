@@ -29,8 +29,15 @@ def AddFileExistsIndex(filepath):
 def Zip(contentsPath , filePath):
     newFilepath = AddFileExistsIndex(filePath)
     zf = zipfile.ZipFile(newFilepath, "w")
-    for dirname, subdirs, files in os.walk(contentsPath):
-        zf.write(dirname)
-        for filename in files:
-            zf.write(os.path.join(dirname, filename))
+    for folderName, subfolders, filenames in os.walk(contentsPath):
+       for filename in filenames:
+           filePath = os.path.join(folderName, filename)    #Create complete filepath of file in directory
+           zf.write(filePath)   #Add file to zip
     zf.close()
+
+
+    for dirpath, dirnames, filenames in os.walk(contentsPath):
+        print(dirpath)
+        print(dirnames)
+        print(filenames)
+        print()
