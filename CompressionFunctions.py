@@ -1,11 +1,25 @@
 import zipfile
+import rarfile
 import os
 
 
-def Extract(oldFilePath , tempFolder):
-    zip_ref = zipfile.ZipFile(oldFilePath, 'r')
-    zip_ref.extractall(tempFolder)
-    zip_ref.close()
+
+def Unzip(filePath , destinationPath):
+    zf = zipfile.ZipFile(filePath, 'r')
+    zf.extractall(destinationPath)
+    zf.close()
+
+def Unrar(filePath , destinationPath):
+    rf = rarfile.RarFile(filePath, 'r')
+    rf.extractall(destinationPath)
+    rf.close()
+
+def Extract(filePath , destinationPath):
+    ext = (os.path.splitext(filePath)[1])
+    if (ext == '.zip'):
+        Unzip(filePath , destinationPath)
+    elif (ext == '.rar'):
+        Unrar(filePath , destinationPath)
 
 
 
@@ -27,17 +41,14 @@ def AddFileExistsIndex(filepath):
 
 
 def Zip(contentsPath , filePath):
-    newFilepath = AddFileExistsIndex(filePath)
+
+    newFilePath = filePath.replace('.rar','.zip')
+    newFilepath = AddFileExistsIndex(newFilePath)
+
+
     zf = zipfile.ZipFile(newFilepath, "w")
     for folderName, subfolders, filenames in os.walk(contentsPath):
        for filename in filenames:
            filePath = os.path.join(folderName, filename)    #Create complete filepath of file in directory
            zf.write(filePath)   #Add file to zip
     zf.close()
-
-
-    for dirpath, dirnames, filenames in os.walk(contentsPath):
-        print(dirpath)
-        print(dirnames)
-        print(filenames)
-        print()
