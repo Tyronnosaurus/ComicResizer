@@ -4,7 +4,7 @@ from PIL import Image
 
 #Original comic will have many pages with the same pixel width (or very similar), but also very different pages such as covers, double-pages, credits...
 #This function finds the most common width
-def GetBaseWidth(tempFolder):
+def GetMostCommonWidth(tempFolder):
     widthsCount = {}    #Dictionary storing pairs of (pixelWidht : ammountOfPagesFound)
     for filename in os.listdir(tempFolder):
         if IsImage(os.path.join(tempFolder,filename)):
@@ -13,7 +13,6 @@ def GetBaseWidth(tempFolder):
                 widthsCount[img.width] = 0
             widthsCount[img.width] += 1
     #Return most common width
-    print(widthsCount)
     return(max(widthsCount))
 
 
@@ -58,12 +57,20 @@ def ResizeSingleImage(imgPath , oldPageWidth , newWidth):
     img.save(imgPath, 'JPEG', quality=90)   #75 is low, 95 is highest
 
 
+#Resize images in folder
+def ResizeImagesInSingleFolder(folderPath, newWidth):
 
-def ResizeImagesInFolder(tempFolder , newWidth):
-
-    oldWidth = GetBaseWidth(tempFolder)
-
-    for filename in os.listdir(tempFolder):
+    oldWidth = GetMostCommonWidth(folderPath)
+  
+    for filename in os.listdir(folderPath):
         if IsImage(filename):
-            imgPath = os.path.join(tempFolder, filename)
+            imgPath = os.path.join(folderPath, filename)
+            print("Resizing" + imgPath)
             ResizeSingleImage(imgPath , oldWidth , newWidth)
+
+
+
+#Resize images in folder (and subfolders, treating each as a different comic)
+def ResizeImagesInFolder(topFolder, newWidth):
+    for folderName, subfolders, filenames in os.walk(topFolder):
+        ResizeImagesInSingleFolder(folderName, newWidth)  #Process each folder inside the directory structure as a single comic
