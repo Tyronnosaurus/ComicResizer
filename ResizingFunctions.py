@@ -55,8 +55,9 @@ def ResizeSingleImage(imgPath , oldPageWidth , newWidth):
 
     img = img.resize((newWidth,newHeight), Image.ANTIALIAS)
 
-    newImgPath = (os.path.splitext(imgPath)[0]) + '.jpg'
-    img.save(newImgPath, 'JPEG', quality=90)   #75 is low, 95 is highest
+    os.remove(imgPath) #Delete original
+    newImgPath = (os.path.splitext(imgPath)[0]) + '.jpg'  #Prepare new filename
+    img.save(newImgPath, 'JPEG', quality=90)   #75 is low quality, 95 is highest
 
 
 #Resize images in folder
