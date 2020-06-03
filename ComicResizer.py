@@ -1,8 +1,8 @@
 
 import os
 import shutil
-from ResizingFunctions import ResizeImagesInFolder
-import CompressionFunctions
+import Resizer
+import Compression
 from send2trash import send2trash   #pip install Send2Trash
 
 
@@ -14,11 +14,11 @@ oldFilepath = r'C:\Users\Eduard\Desktop\AAA.zip'
 tempFolder = (os.path.splitext(oldFilepath)[0])
 
 
-CompressionFunctions.Extract(oldFilepath , tempFolder)
+Compression.Extract(oldFilepath , tempFolder)
 
 
 newWidth = 1280
-ResizeImagesInFolder(tempFolder , newWidth)
+Resizer.ResizeImagesInFolder(tempFolder , newWidth)
 
 os.startfile(tempFolder)
 input('press enter')
@@ -26,7 +26,7 @@ input('press enter')
 #send2trash(oldFilepath)    #Delete original file
 
 
-CompressionFunctions.Zip(tempFolder , oldFilepath)
+Compression.Zip(tempFolder , oldFilepath)
 
 
 #shutil.rmtree(tempFolder)  #Delete temp directory
