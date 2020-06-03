@@ -5,7 +5,8 @@
 # Implement GUI or shell integration
 # Implement standalone images, not only zips
 # Implement folders already decompressed, not only zips
-# Rar support
-# Add recursive subfolder support
 # If all files inside a root folder, move them to root
+# Resize images in parallel using threads
+
+#Test empty archives
 
