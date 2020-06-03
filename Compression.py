@@ -47,7 +47,7 @@ def Zip(contentsPath , filePath):
 
 
     zf = zipfile.ZipFile(newFilepath, "w")
-    for folderName, subfolders, filenames in os.walk(contentsPath):
+    for folderName, _, filenames in os.walk(contentsPath):
        for filename in filenames:
            filePath = os.path.join(folderName, filename)    #Create complete filepath of file in directory
            zf.write(filePath)   #Add file to zip
