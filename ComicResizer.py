@@ -8,9 +8,6 @@ import tkinter
 import Misc
 
 
-
-
-
 def ResizeComic(filePath, newWidth, settings):
     
     print("Working...")
@@ -21,7 +18,7 @@ def ResizeComic(filePath, newWidth, settings):
     tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
     Compression.Extract(filePath , tempFolder)
 
-    Resizer.ResizeImagesInFolder(tempFolder , newWidth, settings.smartResize.get())
+    Resizer.ResizeImagesInFolder(tempFolder , newWidth, settings.smartResize.get(), settings.onlyReduce.get())
 
     #os.startfile(tempFolder)
     #input('press enter')
@@ -88,8 +85,12 @@ checkBoxSmart = tkinter.Checkbutton(window, text="Smart resizing", variable=sett
 checkBoxSmart.grid(row=4, column=0, columnspan=2, sticky='W', pady=10)
 checkBoxSmart.select()
 
+checkBoxOnlyReduce = tkinter.Checkbutton(window, text="Only reduce, don't increase", variable=settings.onlyReduce)
+checkBoxOnlyReduce.grid(row=5, column=0, columnspan=3, sticky='W', pady=10)
+checkBoxOnlyReduce.select()
+
 buttonResize = tkinter.Button(window, text="Resize", command=lambda:ResizeComic(pathTextBox.get() , int(widthTextBox.get()) , settings))
-buttonResize.grid(row=5, column=3)
+buttonResize.grid(row=6, column=3)
 
 
 window.mainloop()

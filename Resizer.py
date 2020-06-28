@@ -39,7 +39,7 @@ def IsEqualOrClose(x , y , t):
 
 
 
-def ResizeSingleImage(imgPath , oldPageWidth , newWidth, smartResize):
+def ResizeSingleImage(imgPath , oldPageWidth , newWidth, smartResize, onlyReduce):
     img = Image.open(imgPath)
     img = RemoveAlpha(img)
 
@@ -58,7 +58,7 @@ def ResizeSingleImage(imgPath , oldPageWidth , newWidth, smartResize):
         resizeRatio = (newWidth/float(img.width))
         newHeight = int((float(img.height)*float(resizeRatio)))
    
-    if (newWidth >= img.width): return 0  #Do not increase size, only reduce
+    if (onlyReduce and newWidth>=img.width): return 0  #Do not increase size, only reduce
 
     img = img.resize((newWidth,newHeight), Image.ANTIALIAS)
 
@@ -66,7 +66,7 @@ def ResizeSingleImage(imgPath , oldPageWidth , newWidth, smartResize):
     newImgPath = (os.path.splitext(imgPath)[0]) + '.jpg'  #Prepare new filename
     img.save(newImgPath, 'JPEG', quality=90)   #75 is low quality, 95 is highest
 
-
+'''
 #Resize images in folder
 def ResizeImagesInSingleFolder(folderPath, newWidth):
 
@@ -76,16 +76,16 @@ def ResizeImagesInSingleFolder(folderPath, newWidth):
         if IsImage(filename):
             imgPath = os.path.join(folderPath, filename)
             ResizeSingleImage(imgPath , oldWidth , newWidth)
-
+'''
 
 #Resizes images in a list of images
-def ResizeImageList(imageList , newWidth, smartResize):
+def ResizeImageList(imageList , newWidth, smartResize, onlyReduce):
 
     oldWidth = GetMostCommonWidth(imageList)
     
     for imgFile in imageList:
         if IsImage(imgFile):
-            ResizeSingleImage(imgFile , oldWidth , newWidth, smartResize)
+            ResizeSingleImage(imgFile , oldWidth , newWidth, smartResize, onlyReduce)
 
 
 
@@ -100,10 +100,10 @@ def AttachPathToFilenameList(folderName, filenames):
 
 #Resize images in folder (and subfolders, treating each as a different comic).
 #This is because some times comics come in different folders inside the same archive (e.g. chapters inside a volume, with chapters having different resolutions)
-def ResizeImagesInFolder(topFolder, newWidth, smartResize):
+def ResizeImagesInFolder(topFolder, newWidth, smartResize, onlyReduce):
     for folderName, _ , filenames in os.walk(topFolder):  #Traverse whole tree. In each folder, we get a list of filenames. The '_' holds list of subdirectories, which is unused
 
         filePaths = AttachPathToFilenameList(folderName, filenames) #The list of files must contain full paths, not just filenames
 
-        ResizeImageList(filePaths, newWidth, smartResize)  #Inside each folder, make a list of files and process it
+        ResizeImageList(filePaths, newWidth, smartResize, onlyReduce)  #Inside each folder, make a list of files and process it
 
