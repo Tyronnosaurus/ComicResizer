@@ -12,8 +12,10 @@ def GetMostCommonWidth(imgList):
             if (img.width not in widthsCount):  #If width not yet in dictionary, add it with ammount 0
                 widthsCount[img.width] = 0
             widthsCount[img.width] += 1
+
     #Return most common width
-    return(max(widthsCount))
+    mostCommonWidth = max(widthsCount, key=widthsCount.get)
+    return(mostCommonWidth)
 
 
 
@@ -56,6 +58,12 @@ def ResizeSingleImage(imgPath , oldPageWidth , newWidth, smartResize):
         resizeRatio = (newWidth/float(img.width))
         newHeight = int((float(img.height)*float(resizeRatio)))
 
+    print(imgPath + ":")
+    print("  Width:  " + str(img.width)  + " > " + str(newWidth))
+    print("  Height: " + str(img.height) + " > " + str(newHeight))
+    print("  resizeRatio: " + str(resizeRatio))
+
+    
     if (newWidth >= img.width): return 0  #Do not increase size, only reduce
 
     img = img.resize((newWidth,newHeight), Image.ANTIALIAS)
