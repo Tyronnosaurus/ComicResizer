@@ -66,17 +66,6 @@ def ResizeSingleImage(imgPath , oldPageWidth , newWidth, smartResize, onlyReduce
     newImgPath = (os.path.splitext(imgPath)[0]) + '.jpg'  #Prepare new filename
     img.save(newImgPath, 'JPEG', quality=90)   #75 is low quality, 95 is highest
 
-'''
-#Resize images in folder
-def ResizeImagesInSingleFolder(folderPath, newWidth):
-
-    oldWidth = GetMostCommonWidth(folderPath)
-  
-    for filename in os.listdir(folderPath):
-        if IsImage(filename):
-            imgPath = os.path.join(folderPath, filename)
-            ResizeSingleImage(imgPath , oldWidth , newWidth)
-'''
 
 #Resizes images in a list of images
 def ResizeImageList(imageList , newWidth, smartResize, onlyReduce):
