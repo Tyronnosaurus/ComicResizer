@@ -11,12 +11,11 @@ import tkinter
 
 
 
-def ResizeComic(filePath, newWidth):
+def ResizeComic(filePath, newWidth, deleteOriginal, deleteTemp):
     
-
-
     print("Working...")
-    print(filePath)
+    print(deleteOriginal)
+    print(deleteTemp)
     #Prepare temp folder
     tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
     Compression.Extract(filePath , tempFolder)
@@ -26,11 +25,13 @@ def ResizeComic(filePath, newWidth):
     #os.startfile(tempFolder)
     #input('press enter')
 
-    #send2trash(filePath)    #Delete original file
+    if (deleteOriginal):
+        send2trash(filePath)    #Delete original file
 
     Compression.Zip(tempFolder , filePath)
 
-    #shutil.rmtree(tempFolder)  #Delete temp directory
+    if (deleteTemp):
+        shutil.rmtree(tempFolder)  #Delete temp directory
 
 
 
@@ -41,8 +42,6 @@ def SelectFolder():
     pathTextBox.delete(0, tkinter.END)
     pathTextBox.insert(0, filePath)
 
-
-#filePath = r'C:\Users\Eduard\Desktop\AAA.zip'
 
 
 
@@ -70,9 +69,16 @@ widthTextBox.insert(0, '1280')
 label = tkinter.Label(window, text="px")
 label.grid(row=1, column=1)
 
-button1 = tkinter.Button(window, text="Resize", command=lambda:ResizeComic(pathTextBox.get() , widthTextBox.get()))
-button1.grid(row=3, column=3)
+deleteOriginal = tkinter.BooleanVar()
+checkBoxDelete = tkinter.Checkbutton(window, text="Delete original", variable=deleteOriginal)
+checkBoxDelete.grid(row=3, column=0, columnspan=3, sticky='W')
 
+deleteTemp = tkinter.BooleanVar()
+checkBoxDeleteTemp = tkinter.Checkbutton(window, text="Delete temp folder", variable=deleteTemp)
+checkBoxDeleteTemp.grid(row=4, column=0, columnspan=3, sticky='W')
+
+button1 = tkinter.Button(window, text="Resize", command=lambda:ResizeComic(pathTextBox.get() , int(widthTextBox.get()) , bool(deleteOriginal.get()) , bool(deleteTemp.get())))
+button1.grid(row=5, column=3)
 
 
 window.mainloop()
