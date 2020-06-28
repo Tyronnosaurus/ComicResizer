@@ -42,13 +42,16 @@ def AddFileExistsIndex(filepath):
 
 def Zip(contentsPath , filePath):
 
-    newFilePath = filePath.replace('.rar','.zip')
-    newFilepath = AddFileExistsIndex(newFilePath)
+    newFilePath = filePath.replace('.rar','.zip')   #Program only supports zip
+    newFilepath = AddFileExistsIndex(newFilePath)   #Add '(2)' or higher suffix if necessary
 
+    length = len(contentsPath)
 
     zf = zipfile.ZipFile(newFilepath, "w")
     for folderName, _, filenames in os.walk(contentsPath):
        for filename in filenames:
-           filePath = os.path.join(folderName, filename)    #Create complete filepath of file in directory
-           zf.write(filePath)   #Add file to zip
+            filePath = os.path.join(folderName, filename)   #Full filepath of file to inlude in zip
+            arcPath  = filePath[length:]                    #Filepath inside zip archive (we don't need to recreate the full path)
+
+            zf.write(filePath, arcname=arcPath)             #Add file to zip
     zf.close()
