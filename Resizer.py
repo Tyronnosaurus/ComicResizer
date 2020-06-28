@@ -37,18 +37,23 @@ def IsEqualOrClose(x , y , t):
 
 
 
-def ResizeSingleImage(imgPath , oldPageWidth , newWidth):
+def ResizeSingleImage(imgPath , oldPageWidth , newWidth, smartResize):
     img = Image.open(imgPath)
     img = RemoveAlpha(img)
 
-    #Case 1: this is a normal page with the usual width (with 2% tolerance because sometimes pages are a few pixels off)
-    if IsEqualOrClose(img.width , oldPageWidth , 0.02):
-        resizeRatio = (newWidth/float(img.width))
-        newHeight = int((float(img.height)*float(resizeRatio)))
-    #Case 2: this is a double-page, a crop, or any other size related exception
+    if (smartResize):
+        #Case 1: this is a normal page with the usual width (with 2% tolerance because sometimes pages are a few pixels off)
+        if IsEqualOrClose(img.width , oldPageWidth , 0.02):
+            resizeRatio = (newWidth/float(img.width))
+            newHeight = int((float(img.height)*float(resizeRatio)))
+        #Case 2: this is a double-page, a crop, or any other size related exception
+        else:
+            resizeRatio = newWidth / oldPageWidth
+            newWidth  = int((float(img.width) *float(resizeRatio)))
+            newHeight = int((float(img.height)*float(resizeRatio)))
     else:
-        resizeRatio = newWidth / oldPageWidth
-        newWidth  = int((float(img.width) *float(resizeRatio)))
+        #Case: dumb resizing, always resize to specified width
+        resizeRatio = (newWidth/float(img.width))
         newHeight = int((float(img.height)*float(resizeRatio)))
 
     if (newWidth >= img.width): return 0  #Do not increase size, only reduce
@@ -72,13 +77,13 @@ def ResizeImagesInSingleFolder(folderPath, newWidth):
 
 
 #Resizes images in a list of images
-def ResizeImageList(imageList , newWidth):
+def ResizeImageList(imageList , newWidth, smartResize):
 
     oldWidth = GetMostCommonWidth(imageList)
     
     for imgFile in imageList:
         if IsImage(imgFile):
-            ResizeSingleImage(imgFile , oldWidth , newWidth)
+            ResizeSingleImage(imgFile , oldWidth , newWidth, smartResize)
 
 
 
@@ -93,10 +98,10 @@ def AttachPathToFilenameList(folderName, filenames):
 
 #Resize images in folder (and subfolders, treating each as a different comic).
 #This is because some times comics come in different folders inside the same archive (e.g. chapters inside a volume, with chapters having different resolutions)
-def ResizeImagesInFolder(topFolder, newWidth):
+def ResizeImagesInFolder(topFolder, newWidth, smartResize):
     for folderName, _ , filenames in os.walk(topFolder):  #Traverse whole tree. In each folder, we get a list of filenames. The '_' holds list of subdirectories, which is unused
 
         filePaths = AttachPathToFilenameList(folderName, filenames) #The list of files must contain full paths, not just filenames
 
-        ResizeImageList(filePaths, newWidth)  #Inside each folder, make a list of files and process it
+        ResizeImageList(filePaths, newWidth, smartResize)  #Inside each folder, make a list of files and process it
 

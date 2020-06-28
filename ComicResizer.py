@@ -11,16 +11,15 @@ import tkinter
 
 
 
-def ResizeComic(filePath, newWidth, deleteOriginal, deleteTemp):
+def ResizeComic(filePath, newWidth, deleteOriginal, deleteTemp, smartResize):
     
     print("Working...")
-    print(deleteOriginal)
-    print(deleteTemp)
+
     #Prepare temp folder
     tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
     Compression.Extract(filePath , tempFolder)
 
-    Resizer.ResizeImagesInFolder(tempFolder , newWidth)
+    Resizer.ResizeImagesInFolder(tempFolder , newWidth, smartResize)
 
     #os.startfile(tempFolder)
     #input('press enter')
@@ -32,7 +31,8 @@ def ResizeComic(filePath, newWidth, deleteOriginal, deleteTemp):
 
     if (deleteTemp):
         shutil.rmtree(tempFolder)  #Delete temp directory
-
+    
+    print("Done")
 
 
 def SelectFolder():
@@ -71,14 +71,18 @@ label.grid(row=1, column=1)
 
 deleteOriginal = tkinter.BooleanVar()
 checkBoxDelete = tkinter.Checkbutton(window, text="Delete original", variable=deleteOriginal)
-checkBoxDelete.grid(row=3, column=0, columnspan=3, sticky='W')
+checkBoxDelete.grid(row=3, column=0, columnspan=2, sticky='W', pady=10)
 
 deleteTemp = tkinter.BooleanVar()
 checkBoxDeleteTemp = tkinter.Checkbutton(window, text="Delete temp folder", variable=deleteTemp)
-checkBoxDeleteTemp.grid(row=4, column=0, columnspan=3, sticky='W')
+checkBoxDeleteTemp.grid(row=3, column=3, columnspan=2, sticky='W')
 
-button1 = tkinter.Button(window, text="Resize", command=lambda:ResizeComic(pathTextBox.get() , int(widthTextBox.get()) , bool(deleteOriginal.get()) , bool(deleteTemp.get())))
-button1.grid(row=5, column=3)
+smartResize = tkinter.BooleanVar()
+checkBoxDeleteTemp = tkinter.Checkbutton(window, text="Smart resizing", variable=smartResize)
+checkBoxDeleteTemp.grid(row=4, column=0, columnspan=2, sticky='W', pady=10)
+
+buttonResize = tkinter.Button(window, text="Resize", command=lambda:ResizeComic(pathTextBox.get() , int(widthTextBox.get()) , deleteOriginal.get() , deleteTemp.get(), smartResize.get()))
+buttonResize.grid(row=5, column=3)
 
 
 window.mainloop()
