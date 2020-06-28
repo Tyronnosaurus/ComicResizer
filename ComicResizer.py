@@ -46,8 +46,6 @@ def SelectFolder():
 
 
 
-
-
 window = tkinter.Tk()
 window.geometry("400x300")
 window.title("Comic Resizer")
@@ -71,20 +69,24 @@ widthTextBox.insert(0, '1280')
 label = tkinter.Label(window, text="px")
 label.grid(row=1, column=1)
 
-deleteOriginal = tkinter.BooleanVar()
-checkBoxDelete = tkinter.Checkbutton(window, text="Delete original", variable=deleteOriginal)
+class Settings:
+    deleteOriginal = tkinter.BooleanVar()
+    deleteTemp     = tkinter.BooleanVar()
+    smartResize    = tkinter.BooleanVar()
+    onlyReduce     = tkinter.BooleanVar()
+settings = Settings()
+
+checkBoxDelete = tkinter.Checkbutton(window, text="Delete original", variable=settings.deleteOriginal)
 checkBoxDelete.grid(row=3, column=0, columnspan=2, sticky='W', pady=10)
 
-deleteTemp = tkinter.BooleanVar()
-checkBoxDeleteTemp = tkinter.Checkbutton(window, text="Delete temp folder", variable=deleteTemp)
+checkBoxDeleteTemp = tkinter.Checkbutton(window, text="Delete temp folder", variable=settings.deleteTemp)
 checkBoxDeleteTemp.grid(row=3, column=3, columnspan=2, sticky='W')
 
-smartResize = tkinter.BooleanVar()
-checkBoxSmart = tkinter.Checkbutton(window, text="Smart resizing", variable=smartResize)
+checkBoxSmart = tkinter.Checkbutton(window, text="Smart resizing", variable=settings.smartResize)
 checkBoxSmart.grid(row=4, column=0, columnspan=2, sticky='W', pady=10)
 checkBoxSmart.select()
 
-buttonResize = tkinter.Button(window, text="Resize", command=lambda:ResizeComic(pathTextBox.get() , int(widthTextBox.get()) , deleteOriginal.get() , deleteTemp.get(), smartResize.get()))
+buttonResize = tkinter.Button(window, text="Resize", command=lambda:ResizeComic(pathTextBox.get() , int(widthTextBox.get()) , settings.deleteOriginal.get() , settings.deleteTemp.get(), settings.smartResize.get()))
 buttonResize.grid(row=5, column=3)
 
 
