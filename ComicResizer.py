@@ -5,7 +5,7 @@ import Resizer
 import Compression
 from send2trash import send2trash   #pip install Send2Trash
 import tkinter
-
+import Misc
 
 
 
@@ -14,6 +14,8 @@ import tkinter
 def ResizeComic(filePath, newWidth, deleteOriginal, deleteTemp, smartResize):
     
     print("Working...")
+
+    filePath = Misc.cleanPath(filePath)
 
     #Prepare temp folder
     tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
