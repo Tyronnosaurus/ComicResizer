@@ -11,7 +11,7 @@ import Misc
 
 
 
-def ResizeComic(filePath, newWidth, deleteOriginal, deleteTemp, smartResize):
+def ResizeComic(filePath, newWidth, settings):
     
     print("Working...")
 
@@ -21,20 +21,21 @@ def ResizeComic(filePath, newWidth, deleteOriginal, deleteTemp, smartResize):
     tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
     Compression.Extract(filePath , tempFolder)
 
-    Resizer.ResizeImagesInFolder(tempFolder , newWidth, smartResize)
+    Resizer.ResizeImagesInFolder(tempFolder , newWidth, settings.smartResize.get())
 
     #os.startfile(tempFolder)
     #input('press enter')
 
-    if (deleteOriginal):
+    if (settings.deleteOriginal.get()):
         send2trash(filePath)    #Delete original file
 
     Compression.Zip(tempFolder , filePath)
 
-    if (deleteTemp):
+    if (settings.deleteTemp.get()):
         shutil.rmtree(tempFolder)  #Delete temp directory
     
     print("Done")
+
 
 
 def SelectFolder():
@@ -43,6 +44,7 @@ def SelectFolder():
     filePath = tkinter.filedialog.askopenfilename( initialdir=desktopPath , title="Select file" , filetypes=( ("Zip files","*.zip") , ("All files","*.*") ) )
     pathTextBox.delete(0, tkinter.END)
     pathTextBox.insert(0, filePath)
+
 
 
 
@@ -86,7 +88,7 @@ checkBoxSmart = tkinter.Checkbutton(window, text="Smart resizing", variable=sett
 checkBoxSmart.grid(row=4, column=0, columnspan=2, sticky='W', pady=10)
 checkBoxSmart.select()
 
-buttonResize = tkinter.Button(window, text="Resize", command=lambda:ResizeComic(pathTextBox.get() , int(widthTextBox.get()) , settings.deleteOriginal.get() , settings.deleteTemp.get(), settings.smartResize.get()))
+buttonResize = tkinter.Button(window, text="Resize", command=lambda:ResizeComic(pathTextBox.get() , int(widthTextBox.get()) , settings))
 buttonResize.grid(row=5, column=3)
 
 
