@@ -78,8 +78,9 @@ checkBoxDeleteTemp = tkinter.Checkbutton(window, text="Delete temp folder", vari
 checkBoxDeleteTemp.grid(row=3, column=3, columnspan=2, sticky='W')
 
 smartResize = tkinter.BooleanVar()
-checkBoxDeleteTemp = tkinter.Checkbutton(window, text="Smart resizing", variable=smartResize)
-checkBoxDeleteTemp.grid(row=4, column=0, columnspan=2, sticky='W', pady=10)
+checkBoxSmart = tkinter.Checkbutton(window, text="Smart resizing", variable=smartResize)
+checkBoxSmart.grid(row=4, column=0, columnspan=2, sticky='W', pady=10)
+checkBoxSmart.select()
 
 buttonResize = tkinter.Button(window, text="Resize", command=lambda:ResizeComic(pathTextBox.get() , int(widthTextBox.get()) , deleteOriginal.get() , deleteTemp.get(), smartResize.get()))
 buttonResize.grid(row=5, column=3)
