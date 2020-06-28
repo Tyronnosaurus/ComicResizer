@@ -13,9 +13,11 @@ import tkinter
 
 def ResizeComic(filePath, newWidth):
     
-    print("Working...")
 
-    #Prepare temp folder 
+
+    print("Working...")
+    print(filePath)
+    #Prepare temp folder
     tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
     Compression.Extract(filePath , tempFolder)
 
@@ -32,8 +34,16 @@ def ResizeComic(filePath, newWidth):
 
 
 
+def SelectFolder():
+    from tkinter import filedialog
+    desktopPath = os.path.expanduser('~') + "/desktop"
+    filePath = tkinter.filedialog.askopenfilename( initialdir=desktopPath , title="Select file" , filetypes=( ("Zip files","*.zip") , ("All files","*.*") ) )
+    pathTextBox.delete(0, tkinter.END)
+    pathTextBox.insert(0, filePath)
+
 
 #filePath = r'C:\Users\Eduard\Desktop\AAA.zip'
+
 
 
 
@@ -42,27 +52,27 @@ window.geometry("400x300")
 window.title("Comic Resizer")
 
 label = tkinter.Label(window, text="Source")
-label.pack()
+label.grid(row=0, column=0)
 
 pathTextBox = tkinter.Entry(window, width=50)
-pathTextBox.pack()
+pathTextBox.grid(row=0, column=1, columnspan=5)
+
+dirDialogButton = tkinter.Button(window, text="...", command=SelectFolder)
+dirDialogButton.grid(row=0, column=8)
 
 label = tkinter.Label(window, text="Width")
-label.pack()
+label.grid(row=1, column=0)
 
 widthTextBox = tkinter.Entry(window, width=5)
-widthTextBox.pack()
-
-label = tkinter.Label(window, text="px")
-label.pack()
-
-pathTextBox.insert(0, r'C:\Users\Eduard\Desktop\AAA.zip')
+widthTextBox.grid(row=1, column=1, sticky='W')
 widthTextBox.insert(0, '1280')
 
-newWidth = int(widthTextBox.get())
-filePath = pathTextBox.get()
+label = tkinter.Label(window, text="px")
+label.grid(row=1, column=1)
 
-button1 = tkinter.Button(window, text="Resize", command=lambda:ResizeComic(filePath,newWidth))
-button1.pack()
+button1 = tkinter.Button(window, text="Resize", command=lambda:ResizeComic(pathTextBox.get() , widthTextBox.get()))
+button1.grid(row=3, column=3)
+
+
 
 window.mainloop()
