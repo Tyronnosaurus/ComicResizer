@@ -57,13 +57,7 @@ def ResizeSingleImage(imgPath , oldPageWidth , newWidth, smartResize):
         #Case: dumb resizing, always resize to specified width
         resizeRatio = (newWidth/float(img.width))
         newHeight = int((float(img.height)*float(resizeRatio)))
-
-    print(imgPath + ":")
-    print("  Width:  " + str(img.width)  + " > " + str(newWidth))
-    print("  Height: " + str(img.height) + " > " + str(newHeight))
-    print("  resizeRatio: " + str(resizeRatio))
-
-    
+   
     if (newWidth >= img.width): return 0  #Do not increase size, only reduce
 
     img = img.resize((newWidth,newHeight), Image.ANTIALIAS)
