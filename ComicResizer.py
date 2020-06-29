@@ -8,21 +8,22 @@ import tkinter
 import Misc
 
 
-def ResizeComic(filePath, newWidth, settings):
-    
+
+
+def ExtractionPhase(filePath, tempFolder):
     print("Working...")
-
-    filePath = Misc.cleanPath(filePath)
-
-    #Prepare temp folder
-    tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
+    
     Compression.Extract(filePath , tempFolder)
 
-    Resizer.ResizeImagesInFolder(tempFolder , newWidth, settings.smartResize.get(), settings.onlyReduce.get())
+
+def ResizingPhase(tempFolder, newWidth, settings):
+    Resizer.ResizeImagesInFolder(tempFolder, newWidth, settings.smartResize.get(), settings.onlyReduce.get())
 
     #os.startfile(tempFolder)
     #input('press enter')
 
+
+def CompressionPhase(filePath, tempFolder, settings):
     if (settings.deleteOriginal.get()):
         send2trash(filePath)    #Delete original file
 
@@ -35,13 +36,29 @@ def ResizeComic(filePath, newWidth, settings):
 
 
 
-def SelectFolder():
+def ResizeComic(filePath, newWidth, settings):
+
+    filePath = Misc.cleanPath(filePath)
+    tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
+
+    ExtractionPhase(filePath, tempFolder)
+
+    ResizingPhase(tempFolder, newWidth, settings)
+
+    CompressionPhase(filePath, tempFolder, settings)
+
+
+
+
+
+
+
+def OpenFileDialog():
     from tkinter import filedialog
     desktopPath = os.path.expanduser('~') + "/desktop"
     filePath = tkinter.filedialog.askopenfilename( initialdir=desktopPath , title="Select file" , filetypes=( ("Zip files","*.zip") , ("All files","*.*") ) )
     pathTextBox.delete(0, tkinter.END)
     pathTextBox.insert(0, filePath)
-
 
 
 
@@ -55,7 +72,7 @@ label.grid(row=0, column=0)
 pathTextBox = tkinter.Entry(window, width=50)
 pathTextBox.grid(row=0, column=1, columnspan=5)
 
-dirDialogButton = tkinter.Button(window, text="...", command=SelectFolder)
+dirDialogButton = tkinter.Button(window, text="...", command=OpenFileDialog)
 dirDialogButton.grid(row=0, column=8)
 
 label = tkinter.Label(window, text="Width")
