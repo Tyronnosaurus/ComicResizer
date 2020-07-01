@@ -11,7 +11,6 @@ import Misc
 
 
 def ExtractionPhase(filePath, tempFolder):
-    print("Working...")
     
     Compression.Extract(filePath , tempFolder)
 
@@ -32,12 +31,14 @@ def CompressionPhase(filePath, tempFolder, settings):
     if (settings.deleteTemp.get()):
         shutil.rmtree(tempFolder)  #Delete temp directory
     
-    print("Done")
+    
 
 
 
 def ResizeComic(filePath, newWidth, settings):
 
+    print("Working...")
+    
     filePath = Misc.cleanPath(filePath)
     tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
 
@@ -47,6 +48,7 @@ def ResizeComic(filePath, newWidth, settings):
 
     CompressionPhase(filePath, tempFolder, settings)
 
+    print("Done")
 
 
 
