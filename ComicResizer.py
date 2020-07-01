@@ -10,16 +10,14 @@ import Misc
 
 
 
-def ExtractionPhase(filePath, tempFolder):
-    
+def ExtractToTempFolder(filePath):
+    tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
     Compression.Extract(filePath , tempFolder)
+    return(tempFolder)
 
 
-def ResizingPhase(tempFolder, newWidth, settings):
-    Resizer.ResizeImagesInFolder(tempFolder, newWidth, settings.smartResize.get(), settings.onlyReduce.get())
-
-    #os.startfile(tempFolder)
-    #input('press enter')
+def ResizeImagesInFolder(folderPath, newWidth, settings):
+    Resizer.ResizeImagesInFolder(folderPath, newWidth, settings.smartResize.get(), settings.onlyReduce.get())
 
 
 def CompressionPhase(filePath, tempFolder, settings):
@@ -40,13 +38,18 @@ def ResizeComic(filePath, newWidth, settings):
     print("Working...")
     
     filePath = Misc.cleanPath(filePath)
-    tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
+    
+    
+    if (Misc.IsArchive(filePath)):
+        #For zip and rar files, we extract contents to a temp folder, resize them, and compress them back
+        tempFolder = ExtractToTempFolder(filePath)
+        ResizeImagesInFolder(tempFolder, newWidth, settings)
+        CompressionPhase(filePath, tempFolder, settings)
 
-    ExtractionPhase(filePath, tempFolder)
 
-    ResizingPhase(tempFolder, newWidth, settings)
+    elif Misc.IsFolder(filePath):
+        print("folder")
 
-    CompressionPhase(filePath, tempFolder, settings)
 
     print("Done")
 

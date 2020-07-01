@@ -1,3 +1,5 @@
+import os
+
 
 def cleanPath(path):
     #In Windows, Alt+RightClick on a file lets the user "Copy as path". This string contains two quotemarks,
@@ -9,3 +11,12 @@ def cleanPath(path):
         path = path[:-1]
 
     return (path)
+
+
+def IsArchive(path):
+    ext = (os.path.splitext(path)[1])
+    return (ext in ['.zip', '.rar'])
+
+
+def IsFolder(path):
+    return(os.path.isdir(path))
