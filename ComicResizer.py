@@ -20,7 +20,7 @@ def ResizeImagesInFolder(folderPath, newWidth, settings):
     Resizer.ResizeImagesInFolder(folderPath, newWidth, settings.smartResize.get(), settings.onlyReduce.get())
 
 
-def CompressionPhase(filePath, tempFolder, settings):
+def CompressFolderContents(filePath, tempFolder, settings):
     if (settings.deleteOriginal.get()):
         send2trash(filePath)    #Delete original file
 
@@ -44,7 +44,7 @@ def ResizeComic(filePath, newWidth, settings):
         #For zip and rar files, we extract contents to a temp folder, resize them, and compress them back
         tempFolder = ExtractToTempFolder(filePath)
         ResizeImagesInFolder(tempFolder, newWidth, settings)
-        CompressionPhase(filePath, tempFolder, settings)
+        CompressFolderContents(filePath, tempFolder, settings)
 
     elif Misc.IsFolder(filePath):
         #For folders, resize all images inside
