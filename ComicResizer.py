@@ -46,9 +46,9 @@ def ResizeComic(filePath, newWidth, settings):
         ResizeImagesInFolder(tempFolder, newWidth, settings)
         CompressionPhase(filePath, tempFolder, settings)
 
-
     elif Misc.IsFolder(filePath):
-        print("folder")
+        #For folders, resize all images inside
+        ResizeImagesInFolder(filePath, newWidth, settings)
 
 
     print("Done")
