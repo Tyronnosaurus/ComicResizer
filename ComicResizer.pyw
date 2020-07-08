@@ -6,6 +6,8 @@ import Compression
 from send2trash import send2trash   #pip install Send2Trash
 import tkinter
 import Misc
+import ContextMenu
+import sys
 
 
 
@@ -67,6 +69,14 @@ def OpenFileDialog():
 
 
 
+#When executing from a file/folder's context menu, sys.arg returns a list of the arguments.
+#[0] is this python script's path; [1] is the file/folder's path 
+if(len(sys.argv)==2):
+    argument = sys.argv[1]  
+else:
+    argument = ''   #Ran script directly, no arguments
+
+
 window = tkinter.Tk()
 window.geometry("400x300")
 window.title("Comic Resizer")
@@ -76,6 +86,8 @@ label.grid(row=0, column=0)
 
 pathTextBox = tkinter.Entry(window, width=50)
 pathTextBox.grid(row=0, column=1, columnspan=5)
+
+pathTextBox.insert(0, argument)
 
 dirDialogButton = tkinter.Button(window, text="...", command=OpenFileDialog)
 dirDialogButton.grid(row=0, column=8)
@@ -114,5 +126,7 @@ checkBoxOnlyReduce.select()
 buttonResize = tkinter.Button(window, text="Resize", command=lambda:ResizeComic(pathTextBox.get() , int(widthTextBox.get()) , settings))
 buttonResize.grid(row=6, column=3)
 
+buttonContextMenu = tkinter.Button(window, text="Add context\nmenu item", command=ContextMenu.AddToContextMenu)
+buttonContextMenu.grid(row=8, column=5)
 
 window.mainloop()
