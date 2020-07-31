@@ -20,3 +20,8 @@ def IsArchive(path):
 
 def IsFolder(path):
     return(os.path.isdir(path))
+
+
+#Checks if x equals y or is relatively close (tolerance between 0 & 1, relative to y)
+def IsEqualOrClose(x , y , t):
+    return (y*(1-t) <= x)  &  (x <= y*(1+t))

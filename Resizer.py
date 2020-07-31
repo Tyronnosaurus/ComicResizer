@@ -1,5 +1,6 @@
 import os
 from PIL import Image
+from Misc import IsEqualOrClose
 
 
 #Original comic will have many pages with the same pixel width (or very similar), but also very different pages such as covers, double-pages, credits...
@@ -30,12 +31,6 @@ def IsImage(filename):
 def RemoveAlpha(image):
     if image.mode in ("RGBA", "P"): image = image.convert("RGB")
     return(image)
-
-
-
-#Checks if x equals y or is relatively close (t between 0 & 1, relative to y)
-def IsEqualOrClose(x , y , t):
-    return (y*(1-t) <= x)  &  (x <= y*(1+t))
 
 
 
