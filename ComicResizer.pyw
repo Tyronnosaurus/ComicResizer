@@ -7,19 +7,16 @@
 #   \_____|\____/|_____|
 
 
-import tkinter
+import tkinter as tk
+from tkinter import ttk
 import os
 import sys
 import GlobalControl 
 import ContextMenu
 
 
-def OpenFileDialog():
-    from tkinter import filedialog
-    desktopPath = os.path.expanduser('~') + "/desktop"
-    filePath = tkinter.filedialog.askopenfilename( initialdir=desktopPath , title="Select file" , filetypes=( ("Zip files","*.zip") , ("All files","*.*") ) )
-    pathTextBox.delete(0, tkinter.END)
-    pathTextBox.insert(0, filePath)
+
+
 
 
 #When executing from a file/folder's context menu, sys.arg returns a list of the arguments.
@@ -31,56 +28,113 @@ else:
 
 
 
-window = tkinter.Tk()
-window.geometry("400x300")
-window.title("Comic Resizer")
 
-label = tkinter.Label(window, text="Source")
-label.grid(row=0, column=0)
+class Application:
 
-pathTextBox = tkinter.Entry(window, width=50)
-pathTextBox.grid(row=0, column=1, columnspan=5)
+    def __init__(self):
+        self.window = tk.Tk()
+        self.window.geometry("300x300")
+        self.window.title("Comic Resizer")
 
-pathTextBox.insert(0, argument)
+        
+        #Control variables
+        self.settings = Settings_class()
 
-dirDialogButton = tkinter.Button(window, text="...", command=OpenFileDialog)
-dirDialogButton.grid(row=0, column=8)
 
-label = tkinter.Label(window, text="Width")
-label.grid(row=1, column=0)
+        #GUI controls
+        ''' ----- Source ----- '''
+        self.frameSource = tk.Frame(self.window)
+        self.frameSource.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
 
-widthTextBox = tkinter.Entry(window, width=5)
-widthTextBox.grid(row=1, column=1, sticky='W')
-widthTextBox.insert(0, '1280')
+        self.label = tk.Label(self.frameSource, text="Source")
+        self.label.pack(side=tk.TOP, fill=tk.NONE, expand=True, padx=5, pady=0, anchor='sw')
 
-label = tkinter.Label(window, text="px")
-label.grid(row=1, column=1)
+        self.pathTextBox = tk.Entry(self.frameSource, width=42)
+        self.pathTextBox.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=5, pady=0, anchor='nw')
+        self.pathTextBox.insert(0, argument)
 
-class Settings:
-    deleteOriginal = tkinter.BooleanVar()
-    deleteTemp     = tkinter.BooleanVar()
-    smartResize    = tkinter.BooleanVar()
-    onlyReduce     = tkinter.BooleanVar()
-settings = Settings()
+        self.dirDialogButton = tk.Button(self.frameSource, text="...", height=1, command=lambda:OpenFileDialog(self.pathTextBox))
+        self.dirDialogButton.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=5, pady=0)
+       
 
-checkBoxDelete = tkinter.Checkbutton(window, text="Delete original", variable=settings.deleteOriginal)
-checkBoxDelete.grid(row=3, column=0, columnspan=2, sticky='W', pady=10)
+        ''' ----- Width ----- '''
+        self.frameWidth = tk.Frame(self.window)
+        self.frameWidth.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
 
-checkBoxDeleteTemp = tkinter.Checkbutton(window, text="Delete temp folder", variable=settings.deleteTemp)
-checkBoxDeleteTemp.grid(row=3, column=3, columnspan=2, sticky='W')
+        #self.separ = ttk.Separator(self.frameWidth, orient=tk.HORIZONTAL)
+        #self.separ.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-checkBoxSmart = tkinter.Checkbutton(window, text="Smart resizing", variable=settings.smartResize)
-checkBoxSmart.grid(row=4, column=0, columnspan=2, sticky='W', pady=10)
-checkBoxSmart.select()
+        self.label = tk.Label(self.frameWidth, text="Width (px)")
+        self.label.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=5, pady=5, anchor="w")
 
-checkBoxOnlyReduce = tkinter.Checkbutton(window, text="Only reduce, don't increase", variable=settings.onlyReduce)
-checkBoxOnlyReduce.grid(row=5, column=0, columnspan=3, sticky='W', pady=10)
-checkBoxOnlyReduce.select()
+        self.widthTextBox = tk.Entry(self.frameWidth, width=5)
+        self.widthTextBox.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=5, pady=5)
+        self.widthTextBox.insert(0, '1280')
+        
 
-buttonResize = tkinter.Button(window, text="Resize", command=lambda:GlobalControl.ResizeComic(pathTextBox.get() , int(widthTextBox.get()) , settings))
-buttonResize.grid(row=6, column=3)
+        ''' ----- Settings ----- '''
+        self.separ = ttk.Separator(self.window, orient=tk.HORIZONTAL)
+        self.separ.pack(side=tk.TOP, fill=tk.BOTH, expand=False, padx=5, pady=0)
 
-buttonContextMenu = tkinter.Button(window, text="Add context\nmenu item", command=ContextMenu.AddToContextMenu)
-buttonContextMenu.grid(row=8, column=5)
+        self.frameSett = tk.Frame(self.window)  #Frame for all checkboxes
+        self.frameSett.pack(side=tk.TOP, fill=tk.BOTH, expand=False, anchor='n')
 
-window.mainloop()
+        self.frame1 = tk.Frame(self.frameSett)  #Subframe to put the first two checboxes on same row 
+        self.frame1.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
+
+        self.checkBoxDelete = tk.Checkbutton(self.frame1, text="Delete original", variable=self.settings.deleteOriginal)
+        self.checkBoxDelete.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=5, pady=0, anchor="w")
+        
+        self.checkBoxDeleteTemp = tk.Checkbutton(self.frame1, text="Delete temp folder", variable=self.settings.deleteTemp)
+        self.checkBoxDeleteTemp.pack(side=tk.RIGHT, fill=tk.NONE, expand=False, padx=5, pady=0, anchor="w")
+
+        self.checkBoxSmart = tk.Checkbutton(self.frameSett, text="Smart resizing (detect doublepages, etc.)", variable=self.settings.smartResize)
+        self.checkBoxSmart.select()
+        self.checkBoxSmart.pack(side=tk.TOP, fill=tk.NONE, expand=False, padx=5, pady=0, anchor="w")
+
+        self.checkBoxOnlyReduce = tk.Checkbutton(self.frameSett, text="Only reduce size, don't increase", variable=self.settings.onlyReduce)
+        self.checkBoxOnlyReduce.select()
+        self.checkBoxOnlyReduce.pack(side=tk.TOP, fill=tk.NONE, expand=False, padx=5, pady=0, anchor="w")
+
+        self.separ = ttk.Separator(self.window, orient=tk.HORIZONTAL)
+        self.separ.pack(side=tk.TOP, fill=tk.BOTH, expand=False, padx=5, pady=5)
+
+
+        ''' ----- Buttons ----- '''
+        self.frameFooter = tk.Frame(self.window)
+        self.frameFooter.pack(side=tk.TOP, fill=tk.BOTH, expand=False, anchor='n')
+
+        self.buttonResize = tk.Button(self.frameFooter, text="Resize", height=3, command=lambda:GlobalControl.ResizeComic(self.pathTextBox.get() , int(self.widthTextBox.get()) , self.settings))
+        self.buttonResize.pack(side=tk.TOP, fill=tk.BOTH, expand=False, padx=10, pady=5)
+
+        self.checkBoxClose = tk.Checkbutton(self.frameFooter, text="Close when finished", variable=self.settings.closeWhenFinished)
+        self.checkBoxClose.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=5, pady=0, anchor="w")
+        self.checkBoxClose.select()
+
+        self.buttonContextMenu = tk.Button(self.frameFooter, text="Add context\nmenu item", command=ContextMenu.AddToContextMenu)
+        self.buttonContextMenu.pack(side=tk.RIGHT, fill=tk.NONE, expand=False, padx=5, pady=5)
+
+    def run(self):
+        self.window.mainloop()
+
+
+class Settings_class:
+    def __init__(self):
+        self.deleteOriginal    = tk.BooleanVar()
+        self.deleteTemp        = tk.BooleanVar()
+        self.smartResize       = tk.BooleanVar()
+        self.onlyReduce        = tk.BooleanVar()
+        self.closeWhenFinished = tk.BooleanVar()
+
+
+def OpenFileDialog(pathTextBox):
+    from tkinter import filedialog
+    desktopPath = os.path.expanduser('~') + "/desktop"
+    filePath = tk.filedialog.askopenfilename( initialdir=desktopPath , title="Select file" , filetypes=( ("Zip files","*.zip") , ("All files","*.*") ) )
+    pathTextBox.delete(0, tk.END)
+    pathTextBox.insert(0, filePath)
+
+
+
+app = Application()
+app.run()
