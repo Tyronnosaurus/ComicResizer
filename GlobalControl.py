@@ -5,6 +5,7 @@ import Resizer
 from send2trash import send2trash   #pip install Send2Trash
 import shutil
 import Misc
+import tkinter
 
 '''Controls high level application flow'''
 
@@ -37,17 +38,17 @@ def ResizeComic(filePath, newWidth, settings):
     print("Working...")
     
     filePath = Misc.cleanPath(filePath)
-    
-    
+
+
     if (Misc.IsArchive(filePath)):
         #For zip and rar files, we extract contents to a temp folder, resize them, and compress them back
         tempFolder = ExtractToTempFolder(filePath)
         ResizeImagesInFolder(tempFolder, newWidth, settings)
         CompressFolderContents(filePath, tempFolder, settings)
 
-    elif Misc.IsFolder(filePath):
+    elif (Misc.IsFolder(filePath)):
         #For folders, resize all images inside
-        ResizeImagesInFolder(filePath, newWidth, settings)
+        ResizeImagesInFolder(filePath, newWidth, settings.smartResize.get(), settings.onlyReduce.get())
 
 
     print("Done")
