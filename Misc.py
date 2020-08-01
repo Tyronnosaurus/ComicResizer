@@ -12,14 +12,20 @@ def cleanPath(path):
 
     return (path)
 
-
+#Returns True if file is zip/rar
 def IsArchive(path):
     ext = (os.path.splitext(path)[1])
-    return (ext in ['.zip', '.rar'])
+    return (ext in ['.zip', '.rar', '.cbz', '.cbr'])
 
 
 def IsFolder(path):
     return(os.path.isdir(path))
+
+
+def IsImage(filename):
+    imgExtensions = [".jpg" , ".jpeg" , ".png" , ".bmp"]
+    extension = (os.path.splitext(filename)[1])
+    return (extension in imgExtensions)
 
 
 #Checks if x equals y or is relatively close (tolerance between 0 & 1, relative to y)

@@ -20,10 +20,7 @@ def GetMostCommonWidth(imgList):
 
 
 
-def IsImage(filename):
-    imgExtensions = [".jpg" , ".jpeg" , ".png" , ".bmp"]
-    extension = (os.path.splitext(filename)[1])
-    return (extension in imgExtensions)
+
     
 
 
