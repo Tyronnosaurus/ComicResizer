@@ -1,6 +1,6 @@
 import os
 from PIL import Image
-from Misc import IsEqualOrClose
+from Misc import IsEqualOrClose, IsImage
 
 
 #Original comic will have many pages with the same pixel width (or very similar), but also very different pages such as covers, double-pages, credits...
@@ -20,13 +20,10 @@ def GetMostCommonWidth(imgList):
 
 
 
-
-    
-
-
 #Remove Alpha channel (transparency layer in PNG) so that it can be saved as JPG
 def RemoveAlpha(image):
-    if image.mode in ("RGBA", "P"): image = image.convert("RGB")
+    if (image.mode in ("RGBA", "P")):
+        image = image.convert("RGB")
     return(image)
 
 
