@@ -35,31 +35,42 @@ def RemoveAlpha(image):
 
 
 def ResizeSingleImage(imgPath , oldPageWidth , newWidth, smartResize, onlyReduce):
-    img = Image.open(imgPath)
-    img = RemoveAlpha(img)
-
-    if (smartResize):
-        #Case 1: this is a normal page with the usual width (with 2% tolerance because sometimes pages are a few pixels off)
-        if IsEqualOrClose(img.width , oldPageWidth , 0.02):
+    with Image.open(imgPath) as img:
+        img = RemoveAlpha(img)
+        hasChanged = False
+        
+        #Calculate new dimensions
+        if (smartResize):
+            #Case 1: this is a normal page with the usual width (with 2% tolerance because sometimes pages are a few pixels off)
+            if IsEqualOrClose(img.width , oldPageWidth , 0.02):
+                resizeRatio = (newWidth/float(img.width))
+                newHeight = int((float(img.height)*float(resizeRatio)))
+            #Case 2: this is a double-page, a crop, or any other size related exception
+            else:
+                resizeRatio = newWidth / oldPageWidth
+                newWidth  = int((float(img.width) *float(resizeRatio)))
+                newHeight = int((float(img.height)*float(resizeRatio)))
+        else:
+            #Case 2: dumb resizing, always resize to width specified by user
             resizeRatio = (newWidth/float(img.width))
             newHeight = int((float(img.height)*float(resizeRatio)))
-        #Case 2: this is a double-page, a crop, or any other size related exception
-        else:
-            resizeRatio = newWidth / oldPageWidth
-            newWidth  = int((float(img.width) *float(resizeRatio)))
-            newHeight = int((float(img.height)*float(resizeRatio)))
-    else:
-        #Case: dumb resizing, always resize to specified width
-        resizeRatio = (newWidth/float(img.width))
-        newHeight = int((float(img.height)*float(resizeRatio)))
-   
-    if (onlyReduce and newWidth>=img.width): return 0  #Do not increase size, only reduce
+    
 
-    img = img.resize((newWidth,newHeight), Image.ANTIALIAS)
+        #Apply changes
+        if not (onlyReduce and newWidth>=img.width):      #Do not increase size, only reduce
+            img = img.resize((newWidth,newHeight), Image.ANTIALIAS)
+            hasChanged = True
 
-    os.remove(imgPath) #Delete original
-    newImgPath = (os.path.splitext(imgPath)[0]) + '.jpg'  #Prepare new filename
-    img.save(newImgPath, 'JPEG', quality=90)   #75 is low quality, 95 is highest
+        if ((os.path.splitext(imgPath)[1]) != '.jpg'):    #Check if format has to be changed
+            hasChanged = True
+
+
+        #Resave image only if it is necessary
+        if (hasChanged):
+            newImgPath = (os.path.splitext(imgPath)[0]) + '.jpg'  #Prepare new filename
+            img.save(newImgPath, 'JPEG', quality=90)   #75 is low quality, 95 is highest
+            os.remove(imgPath) #Delete original
+        
 
 
 #Resizes images in a list of images
