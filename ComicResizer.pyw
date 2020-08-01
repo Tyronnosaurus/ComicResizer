@@ -1,12 +1,4 @@
 
-#    _____ _    _ _____ 
-#   / ____| |  | |_   _|
-#  | |  __| |  | | | |  
-#  | | |_ | |  | | | |  
-#  | |__| | |__| |_| |_ 
-#   \_____|\____/|_____|
-
-
 import tkinter as tk
 from tkinter import ttk
 import os
@@ -16,22 +8,12 @@ import ContextMenu
 
 
 
-
-
-
-#When executing from a file/folder's context menu, sys.arg returns a list of the arguments.
-#[0] is this python script's path; [1] is the file/folder's path 
-if(len(sys.argv)==2):
-    argument = sys.argv[1]  #Started from a context menu
-else:
-    argument = ''           #Started directly -> no arguments
-
-
-
-
 class Application:
 
     def __init__(self):
+
+        self.argument = GetArgument()
+
         self.window = tk.Tk()
         self.window.geometry("300x300")
         self.window.title("Comic Resizer")
@@ -51,7 +33,7 @@ class Application:
 
         self.pathTextBox = tk.Entry(self.frameSource, width=42)
         self.pathTextBox.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=5, pady=0, anchor='nw')
-        self.pathTextBox.insert(0, argument)
+        self.pathTextBox.insert(0, self.argument)
 
         self.dirDialogButton = tk.Button(self.frameSource, text="...", height=1, command=lambda:OpenFileDialog(self.pathTextBox))
         self.dirDialogButton.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=5, pady=0)
@@ -133,6 +115,15 @@ def OpenFileDialog(pathTextBox):
     filePath = tk.filedialog.askopenfilename( initialdir=desktopPath , title="Select file" , filetypes=( ("Zip files","*.zip") , ("All files","*.*") ) )
     pathTextBox.delete(0, tk.END)
     pathTextBox.insert(0, filePath)
+
+
+def GetArgument():
+    #When executing from a file/folder's context menu, sys.arg returns a list of the arguments.
+    #[0] is this python script's path; [1] is the file/folder's path 
+    if(len(sys.argv)==2):
+        return(sys.argv[1])  #Started from a context menu -> Return selected file/files/folder
+    else:
+        return('')           #Started directly -> No arguments
 
 
 
