@@ -1,63 +1,17 @@
 
-import os
-import shutil
-import Resizer
-import Compression
-from send2trash import send2trash   #pip install Send2Trash
+#    _____ _    _ _____ 
+#   / ____| |  | |_   _|
+#  | |  __| |  | | | |  
+#  | | |_ | |  | | | |  
+#  | |__| | |__| |_| |_ 
+#   \_____|\____/|_____|
+
+
 import tkinter
-import Misc
-import ContextMenu
+import os
 import sys
-
-
-
-
-def ExtractToTempFolder(filePath):
-    tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
-    Compression.Extract(filePath , tempFolder)
-    return(tempFolder)
-
-
-def ResizeImagesInFolder(folderPath, newWidth, settings):
-    Resizer.ResizeImagesInFolder(folderPath, newWidth, settings.smartResize.get(), settings.onlyReduce.get())
-
-
-def CompressFolderContents(filePath, tempFolder, settings):
-    if (settings.deleteOriginal.get()):
-        send2trash(filePath)    #Delete original file
-
-    Compression.Zip(tempFolder , filePath)
-
-    if (settings.deleteTemp.get()):
-        shutil.rmtree(tempFolder)  #Delete temp directory
-    
-    
-
-
-
-def ResizeComic(filePath, newWidth, settings):
-
-    print("Working...")
-    
-    filePath = Misc.cleanPath(filePath)
-    
-    
-    if (Misc.IsArchive(filePath)):
-        #For zip and rar files, we extract contents to a temp folder, resize them, and compress them back
-        tempFolder = ExtractToTempFolder(filePath)
-        ResizeImagesInFolder(tempFolder, newWidth, settings)
-        CompressFolderContents(filePath, tempFolder, settings)
-
-    elif Misc.IsFolder(filePath):
-        #For folders, resize all images inside
-        ResizeImagesInFolder(filePath, newWidth, settings)
-
-
-    print("Done")
-
-
-
-
+import GlobalControl 
+import ContextMenu
 
 
 def OpenFileDialog():
@@ -68,13 +22,13 @@ def OpenFileDialog():
     pathTextBox.insert(0, filePath)
 
 
-
 #When executing from a file/folder's context menu, sys.arg returns a list of the arguments.
 #[0] is this python script's path; [1] is the file/folder's path 
 if(len(sys.argv)==2):
-    argument = sys.argv[1]  
+    argument = sys.argv[1]  #Started from a context menu
 else:
-    argument = ''   #Ran script directly, no arguments
+    argument = ''           #Started directly -> no arguments
+
 
 
 window = tkinter.Tk()
@@ -123,7 +77,7 @@ checkBoxOnlyReduce = tkinter.Checkbutton(window, text="Only reduce, don't increa
 checkBoxOnlyReduce.grid(row=5, column=0, columnspan=3, sticky='W', pady=10)
 checkBoxOnlyReduce.select()
 
-buttonResize = tkinter.Button(window, text="Resize", command=lambda:ResizeComic(pathTextBox.get() , int(widthTextBox.get()) , settings))
+buttonResize = tkinter.Button(window, text="Resize", command=lambda:GlobalControl.ResizeComic(pathTextBox.get() , int(widthTextBox.get()) , settings))
 buttonResize.grid(row=6, column=3)
 
 buttonContextMenu = tkinter.Button(window, text="Add context\nmenu item", command=ContextMenu.AddToContextMenu)
