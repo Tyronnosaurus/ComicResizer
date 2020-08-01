@@ -69,7 +69,9 @@ def ResizeSingleImage(imgPath , oldPageWidth , newWidth, smartResize, onlyReduce
         if (hasChanged):
             newImgPath = (os.path.splitext(imgPath)[0]) + '.jpg'  #Prepare new filename
             img.save(newImgPath, 'JPEG', quality=90)   #75 is low quality, 95 is highest
-            os.remove(imgPath) #Delete original
+        
+            if(imgPath != newImgPath):
+                os.remove(imgPath) #Delete original
         
 
 
