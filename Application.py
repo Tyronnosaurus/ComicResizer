@@ -13,15 +13,25 @@ class Application:
         self.argument = GetArgument()
 
         self.window = tk.Tk()
+
+
+        
+        #This object holds settings from the different user inputs
+        self.settings = Settings_class()
+
+       
+
+        #    _____ _    _ _____ 
+        #   / ____| |  | |_   _|
+        #  | |  __| |  | | | |  
+        #  | | |_ | |  | | | |  
+        #  | |__| | |__| |_| |_ 
+        #   \_____|\____/|_____|
+
+        ''' ----- Main window ----- '''
         self.window.geometry("300x350")
         self.window.title("Comic Resizer")
 
-        
-        #Control variables
-        self.settings = Settings_class()
-
-
-        #GUI controls
         ''' ----- Source ----- '''
         self.frameSource = tk.Frame(self.window)
         self.frameSource.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
@@ -110,6 +120,7 @@ class Application:
 
         self.buttonContextMenu = tk.Button(self.frameFooter, text="Add context\nmenu item", command=ContextMenu.AddToContextMenu)
         self.buttonContextMenu.pack(side=tk.RIGHT, fill=tk.NONE, expand=False, padx=5, pady=5)
+
 
 
     ''' Functions run when pressing buttons'''
