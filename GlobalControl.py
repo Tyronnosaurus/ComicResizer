@@ -10,29 +10,6 @@ import tkinter
 '''Controls high level application flow'''
 
 
-def ExtractToTempFolder(filePath):
-    tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
-    Compression.Extract(filePath , tempFolder)
-    return(tempFolder)
-
-
-def ResizeImagesInFolder(folderPath, newWidth, settings):
-    Resizer.ResizeImagesInFolder(folderPath, newWidth, settings.smartResize, settings.onlyReduce)
-
-
-def CompressFolderContents(filePath, tempFolder, settings):
-    if (settings.deleteOriginal):
-        send2trash(filePath)    #Delete original file
-
-    Compression.Zip(tempFolder , filePath)
-
-    if (settings.deleteTemp):
-        shutil.rmtree(tempFolder)  #Delete temp directory
-    
-    
-
-
-
 def ResizeComic(filePath, newWidth, settings):
 
     print("Working...")
@@ -56,3 +33,55 @@ def ResizeComic(filePath, newWidth, settings):
     if (settings.closeWhenFinished):
         import sys
         sys.exit(0)
+
+
+
+
+def ExtractAndPreview(filePath, settings):
+    filePath = Misc.cleanPath(filePath)
+
+    if (Misc.IsArchive(filePath)):
+        #For zip and rar files, we extract contents to a temp folder, resize them, and compress them back
+        tempFolder = ExtractToTempFolder(filePath)
+        os.startfile(tempFolder)
+    else:
+        print('Not a compressed file')
+
+
+
+def ResizeAndCompress(filePath, newWidth, settings):
+    filePath = Misc.cleanPath(filePath)
+    tempFolder = ExtractToTempFolder(filePath)
+
+    if (Misc.IsArchive(filePath)):
+        #For zip and rar files, we extract contents to a temp folder, resize them, and compress them back
+        tempFolder = ExtractToTempFolder(filePath)
+        ResizeImagesInFolder(tempFolder, newWidth, settings)
+        CompressFolderContents(filePath, tempFolder, settings)
+
+    else:
+        print('Not a compressed file')
+
+
+
+
+
+
+def ExtractToTempFolder(filePath):
+    tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
+    Compression.Extract(filePath , tempFolder)
+    return(tempFolder)
+
+
+def ResizeImagesInFolder(folderPath, newWidth, settings):
+    Resizer.ResizeImagesInFolder(folderPath, newWidth, settings.smartResize, settings.onlyReduce)
+
+
+def CompressFolderContents(filePath, tempFolder, settings):
+    if (settings.deleteOriginal):
+        send2trash(filePath)    #Delete original file
+
+    Compression.Zip(tempFolder , filePath)
+
+    if (settings.deleteTemp):
+        shutil.rmtree(tempFolder)  #Delete temp directory
