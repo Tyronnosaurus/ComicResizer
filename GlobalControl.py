@@ -52,3 +52,7 @@ def ResizeComic(filePath, newWidth, settings):
 
 
     print("Done")
+
+    if (settings.closeWhenFinished):
+        import sys
+        sys.exit(0)
