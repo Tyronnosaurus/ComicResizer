@@ -2,10 +2,9 @@
 import tkinter as tk
 from tkinter import ttk
 import os
-import sys
 import GlobalControl
 import ContextMenu
-
+from Misc import GetArgument, OpenFileDialog
 
 
 class Application:
@@ -152,22 +151,6 @@ class Settings_class:
 
 
 
-
-def OpenFileDialog(pathTextBox):
-    from tkinter import filedialog
-    desktopPath = os.path.expanduser('~') + "/desktop"
-    filePath = tk.filedialog.askopenfilename( initialdir=desktopPath , title="Select file" , filetypes=( ("Zip files","*.zip") , ("All files","*.*") ) )
-    pathTextBox.delete(0, tk.END)
-    pathTextBox.insert(0, filePath)
-
-
-def GetArgument():
-    #When executing from a file/folder's context menu, sys.arg returns a list of the arguments.
-    #[0] is this python script's path; [1] is the file/folder's path 
-    if(len(sys.argv)==2):
-        return(sys.argv[1])  #Started from a context menu -> Return selected file/files/folder
-    else:
-        return('')           #Started directly -> No arguments
 
 
 

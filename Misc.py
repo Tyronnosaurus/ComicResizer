@@ -1,4 +1,27 @@
 import os
+import sys
+import tkinter as tk
+from tkinter import filedialog
+
+
+
+#When executing from a file/folder's context menu, sys.arg returns a list of the arguments.
+def GetArgument():
+    if(len(sys.argv)==2):
+        return(sys.argv[1])  #Started from a context menu -> Returns list: [0] is the application's path
+                             #                                             [1] is the file/folder's path 
+    else:
+        return('')           #Started application directly -> No arguments
+
+
+
+#Open dialog to select file and put it in the path field
+def OpenFileDialog(pathTextBox):
+    desktopPath = os.path.expanduser('~') + "/desktop"
+    filePath = tk.filedialog.askopenfilename( initialdir=desktopPath , title="Select file" , filetypes=( ("Zip files","*.zip") , ("All files","*.*") ) )
+    pathTextBox.delete(0, tk.END)
+    pathTextBox.insert(0, filePath)
+
 
 
 def cleanPath(path):
