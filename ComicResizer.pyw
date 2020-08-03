@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 import os
 import sys
-import GlobalControl 
+import GlobalControl
 import ContextMenu
 
 
@@ -15,7 +15,7 @@ class Application:
         self.argument = GetArgument()
 
         self.window = tk.Tk()
-        self.window.geometry("300x300")
+        self.window.geometry("300x350")
         self.window.title("Comic Resizer")
 
         
@@ -42,9 +42,6 @@ class Application:
         ''' ----- Width ----- '''
         self.frameWidth = tk.Frame(self.window)
         self.frameWidth.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
-
-        #self.separ = ttk.Separator(self.frameWidth, orient=tk.HORIZONTAL)
-        #self.separ.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
         self.label = tk.Label(self.frameWidth, text="Width (px)")
         self.label.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=5, pady=5, anchor="w")
@@ -83,11 +80,31 @@ class Application:
 
 
         ''' ----- Buttons ----- '''
+        self.frameStartBtns = tk.Frame(self.window)
+        self.frameStartBtns.pack(side=tk.TOP, fill=tk.BOTH, expand=False, anchor='n')
+
+        self.buttonResize = tk.Button(self.frameStartBtns, text="Resize", height=3, command=self.StartProcess)
+        self.buttonResize.pack(side=tk.TOP, fill=tk.BOTH, expand=False, padx=10, pady=5)
+
+        self.frame1 = tk.Frame(self.frameStartBtns)
+        self.frame1.pack(side=tk.TOP, fill=tk.BOTH, expand=False, anchor='n')
+        
+        self.label = tk.Label(self.frame1, text="Substeps:")
+        self.label.pack(side=tk.LEFT, fill=tk.NONE, expand=True, padx=0, pady=0)
+
+        self.buttonExtract = tk.Button(self.frame1, text="1/2\nExtract & preview", height=2, command=self.StartProcess)
+        self.buttonExtract.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=0, pady=5)
+        
+        self.buttonResize = tk.Button(self.frame1, text="2/2\nResize & compress", height=2, command=self.StartProcess)
+        self.buttonResize.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=5, pady=5)
+
+        self.separ = ttk.Separator(self.window, orient=tk.HORIZONTAL)
+        self.separ.pack(side=tk.TOP, fill=tk.BOTH, expand=False, padx=5, pady=5)
+
+
+        ''' ----- Footer ----- '''
         self.frameFooter = tk.Frame(self.window)
         self.frameFooter.pack(side=tk.TOP, fill=tk.BOTH, expand=False, anchor='n')
-
-        self.buttonResize = tk.Button(self.frameFooter, text="Resize", height=3, command=self.StartProcess)
-        self.buttonResize.pack(side=tk.TOP, fill=tk.BOTH, expand=False, padx=10, pady=5)
 
         self.checkBoxClose = tk.Checkbutton(self.frameFooter, text="Close when finished", variable=self.settings.closeWhenFinished)
         self.checkBoxClose.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=5, pady=0, anchor="w")
@@ -95,6 +112,7 @@ class Application:
 
         self.buttonContextMenu = tk.Button(self.frameFooter, text="Add context\nmenu item", command=ContextMenu.AddToContextMenu)
         self.buttonContextMenu.pack(side=tk.RIGHT, fill=tk.NONE, expand=False, padx=5, pady=5)
+
 
 
     def StartProcess(self):
