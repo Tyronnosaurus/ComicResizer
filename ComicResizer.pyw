@@ -86,7 +86,7 @@ class Application:
         self.frameFooter = tk.Frame(self.window)
         self.frameFooter.pack(side=tk.TOP, fill=tk.BOTH, expand=False, anchor='n')
 
-        self.buttonResize = tk.Button(self.frameFooter, text="Resize", height=3, command=lambda:GlobalControl.ResizeComic(self.pathTextBox.get() , int(self.widthTextBox.get()) , self.settings))
+        self.buttonResize = tk.Button(self.frameFooter, text="Resize", height=3, command=self.StartProcess)
         self.buttonResize.pack(side=tk.TOP, fill=tk.BOTH, expand=False, padx=10, pady=5)
 
         self.checkBoxClose = tk.Checkbutton(self.frameFooter, text="Close when finished", variable=self.settings.closeWhenFinished)
@@ -96,8 +96,16 @@ class Application:
         self.buttonContextMenu = tk.Button(self.frameFooter, text="Add context\nmenu item", command=ContextMenu.AddToContextMenu)
         self.buttonContextMenu.pack(side=tk.RIGHT, fill=tk.NONE, expand=False, padx=5, pady=5)
 
+
+    def StartProcess(self):
+        self.settings.ChangeToNormalVars()
+        GlobalControl.ResizeComic(self.pathTextBox.get() , int(self.widthTextBox.get()) , self.settings)
+
+
+
     def run(self):
         self.window.mainloop()
+
 
 
 class Settings_class:
@@ -107,6 +115,16 @@ class Settings_class:
         self.smartResize       = tk.BooleanVar()
         self.onlyReduce        = tk.BooleanVar()
         self.closeWhenFinished = tk.BooleanVar()
+
+    def ChangeToNormalVars(self):
+        '''Convert tkinter vars to normal vars that can be used by the rest of the application'''
+        self.deleteOriginal    = self.deleteOriginal.get()
+        self.deleteTemp        = self.deleteTemp.get()
+        self.smartResize       = self.smartResize.get()
+        self.onlyReduce        = self.onlyReduce.get()
+        self.closeWhenFinished = self.closeWhenFinished.get()
+
+
 
 
 def OpenFileDialog(pathTextBox):
