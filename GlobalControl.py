@@ -5,7 +5,6 @@ import Resizer
 from send2trash import send2trash   #pip install Send2Trash
 import shutil
 from Misc import CleanPath, GetTempFolder, IsArchive, IsFolder
-import tkinter
 import sys
 
 
