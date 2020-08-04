@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+import tkinter.font as font
 from Misc import GetArgument, OpenFileDialog
 import GlobalControl
 import ContextMenu
@@ -7,6 +8,7 @@ import ContextMenu
 
 
 class Settings_class:
+    #These settings are Tkinter objects (not normal bools). You need to use get() to obtain the actual values.
     def __init__(self):
         self.deleteOriginal    = tk.BooleanVar()
         self.deleteTemp        = tk.BooleanVar()
@@ -21,12 +23,9 @@ class Application:
 
     def __init__(self):
 
-        #Get argument (file or folder name, if program was executed from a context menu)
-        self.argument = GetArgument()
+        self.argument = GetArgument()       #Get argument (file or folder name) if program was executed from a context menu
 
-        #Create main window
-        self.window = tk.Tk()
-
+        self.window = tk.Tk()               #Create main window
         
         self.settings = Settings_class()    #This object holds settings from the different user inputs
 
@@ -38,6 +37,9 @@ class Application:
         #  | | |_ | |  | | | |  
         #  | |__| | |__| |_| |_ 
         #   \_____|\____/|_____|
+
+        #GUI uses the Tkinter framework. The elements are positioned using pack(), rather than grid(),
+        #as I found it easier for correct alignments as long as inline elements are grouped inside frames
 
         ''' ----- Main window ----- '''
         self.window.geometry("300x350")
@@ -102,7 +104,8 @@ class Application:
         self.frameStartBtns = tk.Frame(self.window)
         self.frameStartBtns.pack(side=tk.TOP, fill=tk.BOTH, expand=False, anchor='n')
 
-        self.buttonResize = tk.Button(self.frameStartBtns, text="Resize", height=3, command=lambda:GlobalControl.ResizeComic(self.pathTextBox.get() , int(self.widthTextBox.get()) , self.settings))
+        self.font1 = font.Font(size=20)
+        self.buttonResize = tk.Button(self.frameStartBtns, text="Resize", font=self.font1, height=1, command=lambda:GlobalControl.ResizeComic(self.pathTextBox.get() , int(self.widthTextBox.get()) , self.settings))
         self.buttonResize.pack(side=tk.TOP, fill=tk.BOTH, expand=False, padx=10, pady=5)
 
         self.frame1 = tk.Frame(self.frameStartBtns)
