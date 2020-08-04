@@ -1,6 +1,5 @@
 # TODOs
 
-# Only reduce size, not increase
 # Implement GIFs
 # Implement GUI or shell integration
 # Implement standalone images, not only zips
