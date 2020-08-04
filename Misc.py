@@ -24,7 +24,7 @@ def OpenFileDialog(pathTextBox):
 
 
 
-def cleanPath(path):
+def CleanPath(path):
     #In Windows, Alt+RightClick on a file lets the user "Copy as path". This string contains two quotemarks,
     # which we remove automatically so that the user doesn't have to do it manually
     if (path[0] == '"'):
@@ -34,6 +34,14 @@ def cleanPath(path):
         path = path[:-1]
 
     return (path)
+
+
+
+#Given a compressed file's path, generates a suitable name for a temporal folder in which to extract its files
+def GetTempFolder(filePath):
+    return(os.path.splitext(filePath)[0]) #Same name as filePath but without extension
+
+
 
 #Returns True if file is zip/rar
 def IsArchive(path):
