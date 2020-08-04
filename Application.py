@@ -102,7 +102,7 @@ class Application:
         self.frameStartBtns = tk.Frame(self.window)
         self.frameStartBtns.pack(side=tk.TOP, fill=tk.BOTH, expand=False, anchor='n')
 
-        self.buttonResize = tk.Button(self.frameStartBtns, text="Resize", height=3, command=self.BtnStartProcess)
+        self.buttonResize = tk.Button(self.frameStartBtns, text="Resize", height=3, command=lambda:GlobalControl.ResizeComic(self.pathTextBox.get() , int(self.widthTextBox.get()) , self.settings))
         self.buttonResize.pack(side=tk.TOP, fill=tk.BOTH, expand=False, padx=10, pady=5)
 
         self.frame1 = tk.Frame(self.frameStartBtns)
@@ -111,10 +111,10 @@ class Application:
         self.label = tk.Label(self.frame1, text="Substeps:")
         self.label.pack(side=tk.LEFT, fill=tk.NONE, expand=True, padx=0, pady=0)
 
-        self.buttonExtractAndPreview = tk.Button(self.frame1, text="1/2\nExtract & preview", height=2, command=self.BtnExtractAndPreview)
+        self.buttonExtractAndPreview = tk.Button(self.frame1, text="1/2\nExtract & preview", height=2, command=lambda:GlobalControl.ExtractAndPreview(self.pathTextBox.get() , self.settings))
         self.buttonExtractAndPreview.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=0, pady=5)
         
-        self.buttonResize = tk.Button(self.frame1, text="2/2\nResize & compress", height=2, command=self.BtnResizeAndCompress)
+        self.buttonResize = tk.Button(self.frame1, text="2/2\nResize & compress", height=2, command=lambda:GlobalControl.ResizeAndCompress(self.pathTextBox.get() , int(self.widthTextBox.get()) , self.settings))
         self.buttonResize.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=5, pady=5)
 
         self.separ = ttk.Separator(self.window, orient=tk.HORIZONTAL)
@@ -133,19 +133,6 @@ class Application:
         self.buttonContextMenu.pack(side=tk.RIGHT, fill=tk.NONE, expand=False, padx=5, pady=5)
 
 
-
-    ''' Functions run when pressing buttons'''
-    def BtnStartProcess(self):
-        #self.settings.ChangeToNormalVars()
-        GlobalControl.ResizeComic(self.pathTextBox.get() , int(self.widthTextBox.get()) , self.settings)
-
-    def BtnExtractAndPreview(self):
-        #self.settings.ChangeToNormalVars()
-        GlobalControl.ExtractAndPreview(self.pathTextBox.get() , self.settings)
-
-    def BtnResizeAndCompress(self):
-        #self.settings.ChangeToNormalVars()
-        GlobalControl.ResizeAndCompress(self.pathTextBox.get() , int(self.widthTextBox.get()) , self.settings)
 
 
     ''' Main loop: runs the application '''
