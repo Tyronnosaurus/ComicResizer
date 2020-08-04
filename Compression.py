@@ -15,6 +15,7 @@ def Unrar(filePath , destinationPath):
     rf.close()
 
 def Extract(filePath , destinationPath):
+    print("Extracting...", end =" ")
     ext = (os.path.splitext(filePath)[1])
     if (ext == '.zip'):
         Unzip(filePath , destinationPath)
