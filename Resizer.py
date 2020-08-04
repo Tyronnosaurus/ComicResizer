@@ -96,7 +96,7 @@ def AttachPathToFilenameList(folderName, filenames):
 #Resize images in folder (and subfolders, treating each as a different comic).
 #This is because some times comics come in different folders inside the same archive (e.g. chapters inside a volume, with chapters having different resolutions)
 def ResizeImagesInFolder(topFolder, newWidth, settings):
-    print("Resizing...", end =" ")
+    print("Resizing...", end =" ", flush=True)
     for folderName, _ , filenames in os.walk(topFolder):  #Traverse whole tree. In each folder, we get a list of filenames. The '_' holds list of subdirectories, which is unused
 
         filePaths = AttachPathToFilenameList(folderName, filenames) #The list of files must contain full paths, not just filenames

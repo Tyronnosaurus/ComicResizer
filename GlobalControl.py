@@ -41,7 +41,7 @@ def ExtractAndPreview(filePath, settings):
     if (IsArchive(filePath)):
         Compression.Extract(filePath, tempFolder)
         os.startfile(tempFolder)
-        print("Previewing...", end =" ")
+        print("Previewing...", end =" ", flush=True)
 
 
 #Step 2: Do the rest of the operations
