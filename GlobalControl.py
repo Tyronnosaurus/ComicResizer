@@ -25,12 +25,12 @@ def ResizeComic(filePath, newWidth, settings):
 
     elif (Misc.IsFolder(filePath)):
         #For folders, resize all images inside
-        ResizeImagesInFolder(filePath, newWidth, settings.smartResize, settings.onlyReduce)
+        ResizeImagesInFolder(filePath, newWidth, settings.smartResize.get(), settings.onlyReduce.get())
 
 
     print("Done")
 
-    if (settings.closeWhenFinished):
+    if (settings.closeWhenFinished.get()):
         import sys
         sys.exit(0)
 
@@ -74,14 +74,14 @@ def ExtractToTempFolder(filePath):
 
 
 def ResizeImagesInFolder(folderPath, newWidth, settings):
-    Resizer.ResizeImagesInFolder(folderPath, newWidth, settings.smartResize, settings.onlyReduce)
+    Resizer.ResizeImagesInFolder(folderPath, newWidth, settings.smartResize.get(), settings.onlyReduce.get())
 
 
 def CompressFolderContents(filePath, tempFolder, settings):
-    if (settings.deleteOriginal):
+    if (settings.deleteOriginal.get()):
         send2trash(filePath)    #Delete original file
 
     Compression.Zip(tempFolder , filePath)
 
-    if (settings.deleteTemp):
+    if (settings.deleteTemp.get()):
         shutil.rmtree(tempFolder)  #Delete temp directory

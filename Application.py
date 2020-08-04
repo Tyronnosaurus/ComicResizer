@@ -3,21 +3,32 @@ from tkinter import ttk
 from Misc import GetArgument, OpenFileDialog
 import GlobalControl
 import ContextMenu
-from Settings_class import Settings_class
+
+
+
+class Settings_class:
+    def __init__(self):
+        self.deleteOriginal    = tk.BooleanVar()
+        self.deleteTemp        = tk.BooleanVar()
+        self.smartResize       = tk.BooleanVar()
+        self.onlyReduce        = tk.BooleanVar()
+        self.closeWhenFinished = tk.BooleanVar()
+
+
 
 
 class Application:
 
     def __init__(self):
 
+        #Get argument (file or folder name, if program was executed from a context menu)
         self.argument = GetArgument()
 
+        #Create main window
         self.window = tk.Tk()
 
-
         
-        #This object holds settings from the different user inputs
-        self.settings = Settings_class()
+        self.settings = Settings_class()    #This object holds settings from the different user inputs
 
        
 
@@ -125,15 +136,15 @@ class Application:
 
     ''' Functions run when pressing buttons'''
     def BtnStartProcess(self):
-        self.settings.ChangeToNormalVars()
+        #self.settings.ChangeToNormalVars()
         GlobalControl.ResizeComic(self.pathTextBox.get() , int(self.widthTextBox.get()) , self.settings)
 
     def BtnExtractAndPreview(self):
-        self.settings.ChangeToNormalVars()
+        #self.settings.ChangeToNormalVars()
         GlobalControl.ExtractAndPreview(self.pathTextBox.get() , self.settings)
 
     def BtnResizeAndCompress(self):
-        self.settings.ChangeToNormalVars()
+        #self.settings.ChangeToNormalVars()
         GlobalControl.ResizeAndCompress(self.pathTextBox.get() , int(self.widthTextBox.get()) , self.settings)
 
 
