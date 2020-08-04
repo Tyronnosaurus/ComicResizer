@@ -7,7 +7,6 @@ Run ComicResizer.py (or .pyw) to start. Accepts the following files:
 - Archives: zip, rar, cbr, cbz
 - Folders with images inside
 - Single images
-(you have an option to add this application to the context menu for valid files)
 
 (you have an option to add this application to the context menu for valid files)
 
