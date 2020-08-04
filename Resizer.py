@@ -28,11 +28,15 @@ def RemoveAlpha(image):
 
 
 
-def ResizeSingleImage(imgPath , oldPageWidth , newWidth, smartResize, onlyReduce):
+def ResizeSingleImage(imgPath , oldPageWidth , newWidth, settings):
     with Image.open(imgPath) as img:
         img = RemoveAlpha(img)
         hasChanged = False
         
+        #Put settings in normal bool variables
+        smartResize = settings.smartResize.get()
+        onlyReduce = settings.onlyReduce.get()
+
         #Calculate new dimensions
         if (smartResize):
             #Case 1: this is a normal page with the usual width (with 2% tolerance because sometimes pages are a few pixels off)
@@ -70,13 +74,13 @@ def ResizeSingleImage(imgPath , oldPageWidth , newWidth, smartResize, onlyReduce
 
 
 #Resizes images in a list of images
-def ResizeImageList(imageList , newWidth, smartResize, onlyReduce):
+def ResizeImageList(imageList , newWidth, settings):
 
     oldWidth = GetMostCommonWidth(imageList)
     
     for imgFile in imageList:
         if IsImage(imgFile):
-            ResizeSingleImage(imgFile , oldWidth , newWidth, smartResize, onlyReduce)
+            ResizeSingleImage(imgFile , oldWidth , newWidth, settings)
 
 
 
@@ -91,11 +95,11 @@ def AttachPathToFilenameList(folderName, filenames):
 
 #Resize images in folder (and subfolders, treating each as a different comic).
 #This is because some times comics come in different folders inside the same archive (e.g. chapters inside a volume, with chapters having different resolutions)
-def ResizeImagesInFolder(topFolder, newWidth, smartResize, onlyReduce):
+def ResizeImagesInFolder(topFolder, newWidth, settings):
     print("Resizing...", end =" ")
     for folderName, _ , filenames in os.walk(topFolder):  #Traverse whole tree. In each folder, we get a list of filenames. The '_' holds list of subdirectories, which is unused
 
         filePaths = AttachPathToFilenameList(folderName, filenames) #The list of files must contain full paths, not just filenames
 
-        ResizeImageList(filePaths, newWidth, smartResize, onlyReduce)  #Inside each folder, make a list of files and process it
+        ResizeImageList(filePaths, newWidth, settings)  #Inside each folder, make a list of files and process it
 
