@@ -11,11 +11,8 @@ import tkinter
 
 
 def ResizeComic(filePath, newWidth, settings):
-
-    print("Working...")
     
     filePath = Misc.cleanPath(filePath)
-
 
     if (Misc.IsArchive(filePath)):
         #For zip and rar files, we extract contents to a temp folder, resize them, and compress them back
@@ -27,8 +24,6 @@ def ResizeComic(filePath, newWidth, settings):
         #For folders, resize all images inside
         ResizeImagesInFolder(filePath, newWidth, settings.smartResize.get(), settings.onlyReduce.get())
 
-
-    print("Done")
 
     if (settings.closeWhenFinished.get()):
         import sys
@@ -44,6 +39,7 @@ def ExtractAndPreview(filePath, settings):
         #For zip and rar files, we extract contents to a temp folder, resize them, and compress them back
         tempFolder = ExtractToTempFolder(filePath)
         os.startfile(tempFolder)
+        print("Previewing...", end =" ")
     else:
         print('Not a compressed file')
 
@@ -51,11 +47,9 @@ def ExtractAndPreview(filePath, settings):
 
 def ResizeAndCompress(filePath, newWidth, settings):
     filePath = Misc.cleanPath(filePath)
-    tempFolder = ExtractToTempFolder(filePath)
-
+    tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
+    
     if (Misc.IsArchive(filePath)):
-        #For zip and rar files, we extract contents to a temp folder, resize them, and compress them back
-        tempFolder = ExtractToTempFolder(filePath)
         ResizeImagesInFolder(tempFolder, newWidth, settings)
         CompressFolderContents(filePath, tempFolder, settings)
 
@@ -68,6 +62,7 @@ def ResizeAndCompress(filePath, newWidth, settings):
 
 
 def ExtractToTempFolder(filePath):
+    print("Extracting...", end =" ")
     tempFolder = (os.path.splitext(filePath)[0]) #Same name as filePath but without extension
     Compression.Extract(filePath , tempFolder)
     return(tempFolder)

@@ -41,7 +41,7 @@ def AddFileExistsIndex(filepath):
 
 
 def Zip(contentsPath , filePath):
-
+    print('Compressing...', end =' ')
     newFilePath = filePath.replace('.rar','.zip')   #Program only supports zip
     newFilepath = AddFileExistsIndex(newFilePath)   #Add '(2)' or higher suffix if necessary
 
@@ -55,3 +55,4 @@ def Zip(contentsPath , filePath):
 
             zf.write(filePath, arcname=arcPath)             #Add file to zip
     zf.close()
+    print('Done')
