@@ -3,22 +3,35 @@
 
 import os
 
-arg='''Windows Registry Editor Version 5.00
+ARG='''Windows Registry Editor Version 5.00
 
 [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.zip\shell]
 [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.zip\shell\ComicResizer]
 [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.zip\shell\ComicResizer\command]
-@="py D:/Continguts/ComicResizer/ComicResizer.pyw \\\"%1\\\""
+@="py APP_PATH \\\"%1\\\""
 
 [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.RAR\shell]
 [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.RAR\shell\ComicResizer]
 [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.RAR\shell\ComicResizer\command]
-@="py D:/Continguts/ComicResizer/ComicResizer.pyw \\\"%1\\\""
+@="py APP_PATH \\\"%1\\\""
 
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.cbz\shell]
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.cbz\shell\ComicResizer]
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.cbz\shell\ComicResizer\command]
+@="py APP_PATH \\\"%1\\\""
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.cbr\shell]
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.cbr\shell\ComicResizer]
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.cbr\shell\ComicResizer\command]
+@="py APP_PATH \\\"%1\\\""
 
 '''
 
+
 def AddToContextMenu():
+
+    appPath = "D:/Continguts/ComicResizer/ComicResizer.pyw"
+    arg = ARG.replace("APP_PATH", appPath)
 
     #Prepare a regedit file
     f = open('edits.reg', 'w')
