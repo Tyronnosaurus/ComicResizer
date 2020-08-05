@@ -26,6 +26,11 @@ ARG='''Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.cbr\shell\ComicResizer\command]
 @="py APP_PATH \\\"%1\\\""
 
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell]
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\ComicResizer]
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\ComicResizer\command]
+@="py APP_PATH \\\"%1\\\""
+
 [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\image\shell]
 [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\image\shell\ComicResizer]
 [HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\image\shell\ComicResizer\command]
@@ -34,8 +39,8 @@ ARG='''Windows Registry Editor Version 5.00
 '''
 
 
-def AddToContextMenu():
 
+def AddToContextMenu():
 
     #In the registry command, replace APP_PATH with the actual path of this program
     appPath = sys.argv[0]
