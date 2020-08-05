@@ -5,6 +5,8 @@ from send2trash import send2trash   #pip install Send2Trash
 import shutil
 from Misc import CleanPath, GetTempFolder, IsArchive, IsFolder
 import sys
+import tkinter.messagebox
+
 
 '''------------------------------------'''
 '''Controls high level application flow'''
@@ -42,6 +44,8 @@ def ExtractAndPreview(filePath, settings):
         Compression.Extract(filePath, tempFolder)
         os.startfile(tempFolder)
         print("Previewing...", end =" ", flush=True)
+    else:
+        tkinter.messagebox.showinfo(title='Nothing to extract', message='Selected source is not a compressed file, so no extraction will be done.')
 
 
 #Step 2: Do the rest of the operations
