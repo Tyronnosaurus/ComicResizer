@@ -28,13 +28,15 @@ def RemoveAlpha(image):
 
 
 
-def GetNewDimensions(img, oldMostCommonWidth, newWidth, settings):
+def GetNewDimensions(img, oldMostCommonWidth, newWidth, settings, partOfAComic):
     '''Calculate new dimensions.
-        Smart resizing off (normal resizing): just use specified width, and calculate the height by appliying the same ratio.
-        Smart resizing on: detect if this image is noticeably bigger or smaller than the most common width. For these, resize keeping the old proportion with other pages.
-    '''
-    if (settings.smartResize.get()):
-        #Case 1: this is a normal page with the usual width (with 2% tolerance because sometimes pages are a few pixels off)
+        - Smart resizing On:  Detect if this image is noticeably bigger or smaller than the most common width. For these, resize 
+                              keeping the old proportion with other pages. Only usable if image is part of a comic (otherwise there
+                              would be no oldMostCommonWidth)
+        - Smart resizing Off: Normal (dumb) resizing. Just use specified width, and calculate the height by applying the same ratio. '''
+
+    if (settings.smartResize.get() and partOfAComic):
+        #Case 1: this is a normally sized page (with 2% tolerance, some scanned pages have a few pixels off)
         if (IsEqualOrClose(img.width , oldMostCommonWidth , 0.02)):
             resizeRatio = (newWidth/float(img.width))
             newHeight = int((float(img.height)*float(resizeRatio)))
@@ -53,12 +55,12 @@ def GetNewDimensions(img, oldMostCommonWidth, newWidth, settings):
 
 
 
-def ResizeSingleImage(imgPath , oldMostCommonWidth , newWidth, settings):
+def ResizeSingleImage(imgPath, oldMostCommonWidth, newWidth, settings, partOfAComic):
     with Image.open(imgPath) as img:
         img = RemoveAlpha(img)
         hasChanged = False
 
-        (newWidth,newHeight) = GetNewDimensions(img, oldMostCommonWidth, newWidth, settings)
+        (newWidth,newHeight) = GetNewDimensions(img, oldMostCommonWidth, newWidth, settings, partOfAComic)
 
         #Apply changes
         if (not (settings.onlyReduce.get() and newWidth>=img.width)):      #Do not increase size, only reduce
@@ -73,11 +75,14 @@ def ResizeSingleImage(imgPath , oldMostCommonWidth , newWidth, settings):
         if (hasChanged):
             newImgPath = (os.path.splitext(imgPath)[0]) + '.jpg'  #Prepare new filename
             img.save(newImgPath, 'JPEG', quality=90)   #75 is low quality, 95 is highest
-        
-            if(imgPath != newImgPath):
-                os.remove(imgPath) #Delete original
-        
 
+            #Delete original image (if necessary)
+            if (imgPath != newImgPath):     #If resized image keeps the same extension, do not delete original. It has been replaced already and we would delete the resized image
+                #Case 1: It's part of a comic, and inside of a temp folder. Delete it always or it will get included in the contents of the zip
+                #Case 2: 'Delete Original' checkbox selected. Also delete always, even if it is a standalone image (not part of a comic)
+                if (partOfAComic or settings.deleteOriginal.get()):
+                    os.remove(imgPath)
+                
 
 
 #Resizes images in a list of images
@@ -87,7 +92,7 @@ def ResizeImageList(imageList , newWidth, settings):
     
     for imgFile in imageList:
         if IsImage(imgFile):
-            ResizeSingleImage(imgFile , oldWidth , newWidth, settings)
+            ResizeSingleImage(imgFile , oldWidth , newWidth, settings, partOfAComic=True)
 
 
 
