@@ -3,7 +3,7 @@ import Compression
 import Resizer
 from send2trash import send2trash   #pip install Send2Trash
 import shutil
-from Misc import CleanPath, GetTempFolder, IsArchive, IsFolder
+from Misc import CleanPath, GetTempFolder, IsArchive, IsFolder, IsImage
 import sys
 import tkinter.messagebox
 
@@ -27,6 +27,13 @@ def ResizeComic(filePath, newWidth, settings):
 
     elif (IsFolder(filePath)): #For folders, just resize all images inside
         Resizer.ResizeImagesInFolder(filePath, newWidth, settings)
+
+    elif (IsImage(filePath)):
+        Resizer.ResizeSingleImage(filePath, 0, newWidth, settings, partOfAComic=False)
+
+    else:
+        tkinter.messagebox.showinfo(title='Source not valid', message='Valid files are:\n Archives (zip, rar, cbz, cbr)\n Folders\n Single images')
+
 
     if (settings.closeWhenFinished.get()): sys.exit(0)  #Exit application (if option selected)
 
