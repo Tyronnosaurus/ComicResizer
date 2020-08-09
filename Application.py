@@ -4,17 +4,8 @@ import tkinter.font as font
 from Misc import GetArgument, OpenFileDialog
 import GlobalControl
 import ContextMenu
-
-
-
-class Settings_class:
-    #These settings are Tkinter objects (not normal bools). You need to use get() to obtain the actual values.
-    def __init__(self):
-        self.deleteOriginal    = tk.BooleanVar()
-        self.deleteTemp        = tk.BooleanVar()
-        self.smartResize       = tk.BooleanVar()
-        self.onlyReduce        = tk.BooleanVar()
-        self.closeWhenFinished = tk.BooleanVar()
+from Settings import Settings_class
+import atexit
 
 
 
@@ -27,9 +18,11 @@ class Application:
 
         self.window = tk.Tk()               #Create main window
         
-        self.settings = Settings_class()    #This object holds settings from the different user inputs
-
+        self.settings = Settings_class()    #This object holds user settings
+        self.settings.Load()                #Load settings saved in an external file (Config.ini)
+        atexit.register(self.settings.Save) #Set settings.Save() to run when program is closed
        
+
 
         #    _____ _    _ _____ 
         #   / ____| |  | |_   _|
@@ -89,11 +82,9 @@ class Application:
         self.checkBoxDeleteTemp.pack(side=tk.RIGHT, fill=tk.NONE, expand=False, padx=5, pady=0, anchor="w")
 
         self.checkBoxSmart = tk.Checkbutton(self.frameSett, text="Smart resizing (detect doublepages, etc.)", variable=self.settings.smartResize)
-        self.checkBoxSmart.select()
         self.checkBoxSmart.pack(side=tk.TOP, fill=tk.NONE, expand=False, padx=5, pady=0, anchor="w")
 
         self.checkBoxOnlyReduce = tk.Checkbutton(self.frameSett, text="Only reduce size, don't increase", variable=self.settings.onlyReduce)
-        self.checkBoxOnlyReduce.select()
         self.checkBoxOnlyReduce.pack(side=tk.TOP, fill=tk.NONE, expand=False, padx=5, pady=0, anchor="w")
 
         self.separ = ttk.Separator(self.window, orient=tk.HORIZONTAL)
@@ -130,7 +121,6 @@ class Application:
 
         self.checkBoxClose = tk.Checkbutton(self.frameFooter, text="Close when finished", variable=self.settings.closeWhenFinished)
         self.checkBoxClose.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=5, pady=0, anchor="w")
-        self.checkBoxClose.select()
 
         self.buttonContextMenu = tk.Button(self.frameFooter, text="Add context\nmenu item", command=ContextMenu.AddToContextMenu)
         self.buttonContextMenu.pack(side=tk.RIGHT, fill=tk.NONE, expand=False, padx=5, pady=5)

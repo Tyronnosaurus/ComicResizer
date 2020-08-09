@@ -141,3 +141,5 @@ cython_debug/
 *.reg
 
 .vscode/*
+
+Config.ini
