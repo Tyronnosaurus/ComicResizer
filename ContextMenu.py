@@ -42,21 +42,20 @@ ARG='''Windows Registry Editor Version 5.00
 
 def AddToContextMenu():
 
-    #In the registry command, replace APP_PATH with the actual path of this program
+    #In the registry command, replace APP_PATH with the actual path this program is being run from
     appPath = sys.argv[0]
     arg = ARG.replace("APP_PATH", appPath)
 
-    #Prepare a regedit file
-    f = open('edits.reg', 'w')
+    #Generate path of reg file
+    path = os.path.dirname(appPath) + '/edits.reg'
+
+    #Create file
+    f = open(path, 'w')
     f.write(arg)
     f.close()
 
     #Run file
-    currentDir = os.getcwd()
-    regPath = os.path.join(currentDir, 'edits.reg')
-
-    cmdLine = 'regedit.exe ' + regPath
-
+    cmdLine = 'regedit.exe ' + path
     os.system(cmdLine)
 
     #Delete regedit file
