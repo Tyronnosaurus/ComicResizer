@@ -11,18 +11,21 @@ class Settings_class:
         self.smartResize       = tk.BooleanVar()
         self.onlyReduce        = tk.BooleanVar()
         self.closeWhenFinished = tk.BooleanVar()
-          
+        
+        #Path of the external file to save and load settings. We need dirname() and realpath() because otherwise, when
+        #executing from a context menu, the config.ini file is saved in the comic's folder, not the application's folder.
+        self.settingsPath = os.path.dirname(os.path.realpath(__file__)) + '/config.ini'
 
 
     def Load(self):
-        if(os.path.exists('config.ini')):
+
+        if(os.path.exists(self.settingsPath)):
             try:
                 config = ConfigParser()
 
-                config.read('config.ini')
+                config.read(self.settingsPath)
 
                 self.deleteOriginal.set(    config.getboolean('main', 'deleteOriginal') )
-                print(config.getboolean('main', 'deleteOriginal'))
                 self.deleteTemp.set(        config.getboolean('main', 'deleteTemp') )
                 self.smartResize.set(       config.getboolean('main', 'smartResize') )
                 self.onlyReduce.set(        config.getboolean('main', 'onlyReduce') )
@@ -36,8 +39,8 @@ class Settings_class:
 
     def Save(self):
         config = ConfigParser()
-
-        config.read('config.ini')
+        
+        config.read(self.settingsPath)
         if(not config.has_section('main')): config.add_section('main')
 
         config.set(section='main', option='deleteOriginal'   , value=str(self.deleteOriginal.get()))
@@ -46,7 +49,7 @@ class Settings_class:
         config.set(section='main', option='onlyReduce'       , value=str(self.onlyReduce.get()))
         config.set(section='main', option='closeWhenFinished', value=str(self.closeWhenFinished.get()))
 
-        with open('config.ini', 'w') as f:
+        with open(self.settingsPath, 'w') as f:
             config.write(f)
 
 
