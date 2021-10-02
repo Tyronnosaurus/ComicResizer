@@ -1,6 +1,7 @@
 import zipfile
 import rarfile
 import os
+from Misc import AddFileExistsIndex
 
 
 
@@ -21,23 +22,6 @@ def Extract(filePath , destinationPath):
         Unzip(filePath , destinationPath)
     elif (ext == '.rar'):
         Unrar(filePath , destinationPath)
-
-
-
-#If the file already exists, adds a " (2)" suffix, or higher
-def AddFileExistsIndex(filepath): 
-    if not(os.path.exists(filepath)):
-        return(filepath)
-    else:
-        i = 2
-        filepathWithoutExt = os.path.splitext(filepath)[0]
-        extension          = os.path.splitext(filepath)[1]
-
-        newFilepath = filepathWithoutExt + " (%s)" % i + extension
-        while os.path.exists(newFilepath):
-            i+=1
-            newFilepath = filepathWithoutExt + " (%s)" % i + extension
-        return(newFilepath)
 
 
 

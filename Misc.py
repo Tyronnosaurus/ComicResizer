@@ -62,3 +62,21 @@ def IsImage(filename):
 #Checks if x equals y or is relatively close (tolerance between 0 & 1, relative to y)
 def IsEqualOrClose(x , y , t):
     return (y*(1-t) <= x)  &  (x <= y*(1+t))
+
+
+
+
+#If the file already exists, adds a " (2)" suffix, or higher
+def AddFileExistsIndex(filepath): 
+    if not(os.path.exists(filepath)):
+        return(filepath)
+    else:
+        i = 2
+        filepathWithoutExt = os.path.splitext(filepath)[0]
+        extension          = os.path.splitext(filepath)[1]
+
+        newFilepath = filepathWithoutExt + " (%s)" % i + extension
+        while os.path.exists(newFilepath):
+            i+=1
+            newFilepath = filepathWithoutExt + " (%s)" % i + extension
+        return(newFilepath)
