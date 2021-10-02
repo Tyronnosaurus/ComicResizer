@@ -6,6 +6,7 @@ import shutil
 from Misc import CleanPath, GetTempFolder, IsArchive, IsFolder, IsImage
 import sys
 import tkinter.messagebox
+from Misc import AddFileExistsIndex
 
 
 '''------------------------------------'''
@@ -21,9 +22,18 @@ def ResizeComic(filePath, newWidth, settings):
     if (IsArchive(filePath)):  #For compressed files, we extract contents to a temp folder, resize them, and compress them back
         Compression.Extract(filePath, tempFolder)
         Resizer.ResizeImagesInFolder(tempFolder, newWidth, settings)
-        if (settings.deleteOriginal.get()): send2trash(filePath)    #Send original file to trash (if option selected)
-        Compression.Zip(tempFolder, filePath)
+        Compression.Zip(tempFolder, filePath+'.temp')
+        
         if (settings.deleteTemp.get()): shutil.rmtree(tempFolder)   #Delete temp directory (if option selected)
+
+        if (os.path.getsize(filePath+'.temp') > os.path.getsize(filePath)):
+            send2trash(filePath+'.temp')                                        #If resulting compressed file is larger, keep original
+        else:
+            if (settings.deleteOriginal.get()): send2trash(filePath)            #Send original file to trash (if option selected)
+            os.rename(filePath+'.temp' , AddFileExistsIndex(filePath))          
+
+
+
 
     elif (IsFolder(filePath)): #For folders, just resize all images inside
         Resizer.ResizeImagesInFolder(filePath, newWidth, settings)
