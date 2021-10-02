@@ -22,7 +22,7 @@ def GetMostCommonWidth(imgList):
 
 #Remove Alpha channel (transparency layer in PNG) so that it can be saved as JPG
 def RemoveAlpha(image):
-    if (image.mode in ("RGBA", "P")):
+    if (image.mode in ("RGBA", "P", "LA")):
         image = image.convert("RGB")
     return(image)
 
