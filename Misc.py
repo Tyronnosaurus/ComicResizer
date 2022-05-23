@@ -44,17 +44,21 @@ def GetTempFolder(filePath):
 #############################################################################
 
 
-
 # Returns True if file is a compressed archive (zip, rar...)
 def IsArchive(path):
     ext = (os.path.splitext(path)[1])
     return (ext in ['.zip', '.rar', '.cbz', '.cbr'])
 
 
-
 def IsFolder(path):
     return(os.path.isdir(path))
 
+
+# Returns True if folder contains mostly images. Allow for some non-image files (typical txt or json with info about the comic)
+def IsFolderWithImages(path):
+    list = os.listdir(path)
+    count = sum(map(lambda x : IsSingleImage(x), list))  # Count odd numbers in the list
+    return(count > len(list)*0.8)   #At least 80% of files must be images
 
 
 def IsSingleImage(path):
@@ -63,7 +67,9 @@ def IsSingleImage(path):
     return (extension in imgExtensions)
 
 
-#Checks if x equals y or is relatively close (tolerance between 0 & 1, relative to y)
+# Returns True if folder contains archives (zip, rar...) exclusively. No subfolders either.
+def IsFolderWithArchives(path):
+    return( all(IsArchive(x) for x in os.listdir(path)) )
 
 
 #############################################################################
