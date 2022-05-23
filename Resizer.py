@@ -1,7 +1,9 @@
 import os
 from PIL import Image
-from Misc import IsEqualOrClose, IsImage
-
+from Misc import IsEqualOrClose, IsImage, AddFileExistsIndex, GetTempFolder
+import Compression
+from send2trash import send2trash   #pip install Send2Trash
+import shutil
 
 #Original comic will have many pages with the same pixel width (or very similar), but also very different pages such as covers, double-pages, credits...
 #This function finds the most common width
@@ -51,6 +53,24 @@ def GetNewDimensions(img, oldMostCommonWidth, newWidth, settings, partOfAComic):
         newHeight = int((float(img.height)*float(resizeRatio)))
 
     return(newWidth,newHeight)
+
+
+
+
+def ResizeArchive(filePath, newWidth, settings):
+    tempFolder = GetTempFolder(filePath)
+
+    Compression.Extract(filePath, tempFolder)
+    ResizeImagesInFolder(tempFolder, newWidth, settings)
+    Compression.Zip(tempFolder, filePath+'.temp')
+    
+    if (settings.deleteTemp.get()): shutil.rmtree(tempFolder)   #Delete temp directory (if option selected)
+
+    if (os.path.getsize(filePath+'.temp') > os.path.getsize(filePath)):
+        send2trash(filePath+'.temp')                                        #If resulting compressed file is larger, keep original
+    else:
+        if (settings.deleteOriginal.get()): send2trash(filePath)            #Send original file to trash (if option selected)
+        os.rename(filePath+'.temp' , AddFileExistsIndex(filePath))
 
 
 

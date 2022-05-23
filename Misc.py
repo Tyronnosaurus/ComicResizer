@@ -5,7 +5,7 @@ from tkinter import filedialog
 
 
 
-#When executing from a file/folder's context menu, sys.arg returns a list of the arguments.
+# When executing from a file/folder's context menu, sys.arg returns a list of the arguments.
 def GetArgument():
     if(len(sys.argv)==2):
         return(sys.argv[1])  #Started from a context menu -> Returns list: [0] is the application's path
@@ -15,58 +15,68 @@ def GetArgument():
 
 
 
-#Open dialog to select file and put it in the path field
+# Open dialog to select file and put it in the path field
 def OpenFileDialog(pathTextBox):
     desktopPath = os.path.expanduser('~') + "/desktop"
     filePath = tk.filedialog.askopenfilename( initialdir=desktopPath , title="Select file" , filetypes=( ("Zip files","*.zip") , ("All files","*.*") ) )
-    pathTextBox.delete(0, tk.END)
+    pathTextBox.delete(0, tk.END) # Delete any previous contents
     pathTextBox.insert(0, filePath)
 
 
 
+# In Windows, Alt+RightClick on a file lets the user "Copy as path". This string contains two
+# quotemarks, which we remove automatically so that the user doesn't have to do it manually.
 def CleanPath(path):
-    #In Windows, Alt+RightClick on a file lets the user "Copy as path". This string contains two
-    #quotemarks, which we remove automatically so that the user doesn't have to do it manually.
-
     if (path == ''): return(path)   #If empty, return immediately or there will be an error accessing path[0]
 
-    if (path[0] == '"') and (path[-1] == '"'):
-        path = path[1:-1]
-
+    if (path[0]  == '"'):  path = path[1:]
+    if (path[-1] == '"'):  path = path[:-1]
     return (path)
 
 
 
-#Given a compressed file's path, generates a suitable name for a temporal folder in which to extract its files
+# Given a compressed file's path, generates a suitable name for a temporal folder in which to extract its files
 def GetTempFolder(filePath):
-    return(os.path.splitext(filePath)[0]) #Same name as filePath but without extension
+    return(os.path.splitext(filePath)[0]) #Same name as original filename, but without extension
 
 
 
-#Returns True if file is zip/rar
+#############################################################################
+
+
+
+# Returns True if file is a compressed archive (zip, rar...)
 def IsArchive(path):
     ext = (os.path.splitext(path)[1])
     return (ext in ['.zip', '.rar', '.cbz', '.cbr'])
+
 
 
 def IsFolder(path):
     return(os.path.isdir(path))
 
 
-def IsImage(filename):
+
+def IsSingleImage(path):
     imgExtensions = [".jpg" , ".jpeg" , ".png" , ".bmp"]
-    extension = (os.path.splitext(filename)[1])
+    extension = (os.path.splitext(path)[1])
     return (extension in imgExtensions)
 
 
 #Checks if x equals y or is relatively close (tolerance between 0 & 1, relative to y)
+
+
+#############################################################################
+
+
+
+# Checks if x equals y or is relatively close (tolerance between 0 & 1, relative to y)
 def IsEqualOrClose(x , y , t):
     return (y*(1-t) <= x)  &  (x <= y*(1+t))
 
 
 
-
-#If the file already exists, adds a " (2)" suffix, or higher
+# If the file already exists, adds a " (2)" suffix, or higher
 def AddFileExistsIndex(filepath): 
     if not(os.path.exists(filepath)):
         return(filepath)

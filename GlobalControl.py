@@ -1,13 +1,11 @@
 import os
 import Compression
 import Resizer
-from send2trash import send2trash   #pip install Send2Trash
-import shutil
-from Misc import CleanPath, GetTempFolder, IsArchive, IsFolder, IsImage
+from Misc import CleanPath, IsArchive, IsFolder, IsImage, GetTempFolder
 import sys
 import tkinter.messagebox
-from Misc import AddFileExistsIndex
-
+from send2trash import send2trash   #pip install Send2Trash
+import shutil
 
 '''------------------------------------'''
 '''Controls high level application flow'''
@@ -17,42 +15,42 @@ from Misc import AddFileExistsIndex
 def ResizeComic(filePath, newWidth, settings):
     
     filePath = CleanPath(filePath)
-    tempFolder = GetTempFolder(filePath)
+    
 
-    if (IsArchive(filePath)):  #For compressed files, we extract contents to a temp folder, resize them, and compress them back
-        Compression.Extract(filePath, tempFolder)
-        Resizer.ResizeImagesInFolder(tempFolder, newWidth, settings)
-        Compression.Zip(tempFolder, filePath+'.temp')
+    # For compressed files, we extract contents to a temp folder, resize them as a comic, and compress them back
+    if (IsArchive(filePath)):
+        Resizer.ResizeArchive(filePath, newWidth, settings)
         
-        if (settings.deleteTemp.get()): shutil.rmtree(tempFolder)   #Delete temp directory (if option selected)
 
-        if (os.path.getsize(filePath+'.temp') > os.path.getsize(filePath)):
-            send2trash(filePath+'.temp')                                        #If resulting compressed file is larger, keep original
-        else:
-            if (settings.deleteOriginal.get()): send2trash(filePath)            #Send original file to trash (if option selected)
-            os.rename(filePath+'.temp' , AddFileExistsIndex(filePath))          
-
-
-
-
-    elif (IsFolder(filePath)): #For folders, just resize all images inside
+    # For a folder, resize the images inside (together, as a comic)
+    elif (IsFolder(filePath)): #For folders, 
         Resizer.ResizeImagesInFolder(filePath, newWidth, settings)
 
+    # For a standalone image, just resize it
     elif (IsImage(filePath)):
         Resizer.ResizeSingleImage(filePath, 0, newWidth, settings, partOfAComic=False)
 
+    # For everything else, show an error listing which files are valid
     else:
-        tkinter.messagebox.showinfo(title='Source not valid', message='Valid files are:\n Archives (zip, rar, cbz, cbr)\n Folders\n Single images')
-
+        ShowInvalidSourceError()
+        
 
     if (settings.closeWhenFinished.get()): sys.exit(0)  #Exit application (if option selected)
 
 
 
 
+# Show an error popup listing which files are valid
+def ShowInvalidSourceError():
+    tkinter.messagebox.showinfo(title='Source not valid',
+                                message='Valid files are:\n Archives (zip, rar, cbz, cbr)\n Folders\n Single images')
+       
+
+
 ## User can use the 2 small 'Substep' buttons to do the resizing in two phases and preview images before resizing
 ## (and delete or edit any image if desired). Only useful for compressed files, not folders or imagelists.
-#Step 1: Extract to temp folder and show this folder in explorer
+
+#Substep 1: Extract to temp folder and show this folder in explorer
 def ExtractAndPreview(filePath, settings):
     filePath = CleanPath(filePath)
     tempFolder = GetTempFolder(filePath)
@@ -65,7 +63,7 @@ def ExtractAndPreview(filePath, settings):
         tkinter.messagebox.showinfo(title='Nothing to extract', message='Selected source is not a compressed file, so no extraction will be done.')
 
 
-#Step 2: Do the rest of the operations
+#Substep 2: Do the rest of the operations
 def ResizeAndCompress(filePath, newWidth, settings):
     filePath = CleanPath(filePath)
     tempFolder = GetTempFolder(filePath)

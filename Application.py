@@ -95,8 +95,13 @@ class Application:
         self.frameStartBtns = tk.Frame(self.window)
         self.frameStartBtns.pack(side=tk.TOP, fill=tk.BOTH, expand=False, anchor='n')
 
+        # Resize button
         self.font1 = font.Font(size=20)
-        self.buttonResize = tk.Button(self.frameStartBtns, text="Resize", font=self.font1, height=1, command=lambda:GlobalControl.ResizeComic(self.pathTextBox.get() , int(self.widthTextBox.get()) , self.settings))
+        self.buttonResize = tk.Button(self.frameStartBtns,
+                                      text="Resize",
+                                      font=self.font1,
+                                      height=1,
+                                      command=lambda:GlobalControl.ResizeComic(self.pathTextBox.get() , int(self.widthTextBox.get()) , self.settings))
         self.buttonResize.pack(side=tk.TOP, fill=tk.BOTH, expand=False, padx=10, pady=5)
 
         self.frame1 = tk.Frame(self.frameStartBtns)
@@ -105,10 +110,18 @@ class Application:
         self.label = tk.Label(self.frame1, text="Substeps:")
         self.label.pack(side=tk.LEFT, fill=tk.NONE, expand=True, padx=0, pady=0)
 
-        self.buttonExtractAndPreview = tk.Button(self.frame1, text="1/2\nExtract & preview", height=2, command=lambda:GlobalControl.ExtractAndPreview(self.pathTextBox.get() , self.settings))
+        # Substep 1 button
+        self.buttonExtractAndPreview = tk.Button(self.frame1,
+                                                 text="1/2\nExtract & preview",
+                                                 height=2,
+                                                 command=lambda:GlobalControl.ExtractAndPreview(self.pathTextBox.get() , self.settings))
         self.buttonExtractAndPreview.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=0, pady=5)
         
-        self.buttonResize = tk.Button(self.frame1, text="2/2\nResize & compress", height=2, command=lambda:GlobalControl.ResizeAndCompress(self.pathTextBox.get() , int(self.widthTextBox.get()) , self.settings))
+        # Substep 2 button
+        self.buttonResize = tk.Button(self.frame1,
+                                      text="2/2\nResize & compress",
+                                      height=2,
+                                      command=lambda:GlobalControl.ResizeAndCompress(self.pathTextBox.get() , int(self.widthTextBox.get()) , self.settings))
         self.buttonResize.pack(side=tk.LEFT, fill=tk.NONE, expand=False, padx=5, pady=5)
 
         self.separ = ttk.Separator(self.window, orient=tk.HORIZONTAL)
