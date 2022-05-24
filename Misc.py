@@ -57,11 +57,11 @@ def IsFolder(path):
 # Returns True if folder contains mostly images. Allow for some non-image files (typical txt or json with info about the comic)
 def IsFolderWithImages(path):
     list = os.listdir(path)
-    count = sum(map(lambda x : IsSingleImage(x), list))  # Count odd numbers in the list
+    count = sum(map(lambda x : IsImage(x), list))  # Count odd numbers in the list
     return(count > len(list)*0.8)   #At least 80% of files must be images
 
 
-def IsSingleImage(path):
+def IsImage(path):
     imgExtensions = [".jpg" , ".jpeg" , ".png" , ".bmp"]
     extension = (os.path.splitext(path)[1])
     return (extension in imgExtensions)
