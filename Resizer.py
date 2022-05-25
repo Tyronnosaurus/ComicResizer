@@ -52,20 +52,20 @@ def ResizeImageList(imageList , newWidth, settings):
     
     for imgFile in imageList:
         if IsImage(imgFile):
-            ResizeImage(imgFile , oldWidth , newWidth, settings, partOfAComic=True)
+            ResizeImageInComic(imgFile , oldWidth , newWidth, settings, partOfAComic=True)
 
 
 
 
-def ResizeImage(imgPath, oldMostCommonWidth, newWidth, settings, partOfAComic):
+def ResizeImageInComic(imgPath, oldMostCommonWidth, newWidth, settings, partOfAComic):
     with Image.open(imgPath) as img:
         img = RemoveAlpha(img)
         hasChanged = False
 
-        (newWidth,newHeight) = GetNewDimensions(img, oldMostCommonWidth, newWidth, settings, partOfAComic)
+        (newWidth,newHeight) = GetNewDimensionsOfPage(img, oldMostCommonWidth, newWidth, settings, partOfAComic)
 
         # Apply changes
-        if (not (settings.onlyReduce.get() and newWidth>=img.width)):      # Do not increase size, only reduce
+        if (not (settings.onlyReduce.get() and newWidth>=img.width)):      # Option: Do not increase size, only reduce
             img = img.resize((newWidth,newHeight), Image.ANTIALIAS)
             hasChanged = True
 
@@ -87,32 +87,49 @@ def ResizeImage(imgPath, oldMostCommonWidth, newWidth, settings, partOfAComic):
 
 
 
+# For a standalone image (not part of a comic), don't apply smart resizing
+def ResizeSingleImage(imgPath, newWidth, settings):
+    ResizeImageInComic(imgPath, 0, newWidth, settings, partOfAComic=False)  # Reuse code
+
+
+
+
 
 ## Auxiliar methods ########################################################################
 
 
-#Calculate new dimensions.
-#    - Smart resizing On:  If image is noticeably bigger or smaller than most pages (like a doublespread), resize accordingly.
-#                          Only usable if image is part of a comic (otherwise there would be no oldMostCommonWidth)
-#    - Smart resizing Off: Just resize every image to the same width.
-def GetNewDimensions(img, oldMostCommonWidth, newWidth, settings, partOfAComic):
+# Calculate new dimensions.
+def GetNewDimensionsOfPage(img, oldMostCommonWidth, newWidth, settings, partOfAComic):
 
-    if (settings.smartResize.get() and partOfAComic):
-        #Case 1: this is a normally sized page (with 2% tolerance, some scanned pages have a few pixels off)
-        if (IsEqualOrClose(img.width , oldMostCommonWidth , 0.02)):
-            resizeRatio = (newWidth/float(img.width))
-            newHeight = int((float(img.height)*float(resizeRatio)))
-        #Case 2: this is a double-page, a crop, or any other size related exception
-        else:
-            resizeRatio = newWidth / oldMostCommonWidth
-            newWidth  = int((float(img.width) *float(resizeRatio)))
-            newHeight = int((float(img.height)*float(resizeRatio)))
-    else:
-        #Case 2: dumb resizing, always resize to width specified by user
+    if (settings.smartResize.get() and partOfAComic): return( GetNewDimensionsOfPage_Smart(img, oldMostCommonWidth, newWidth) )
+    else:                                             return( GetNewDimensionsOfPage_Dumb(img, newWidth) )
+
+
+#Smart resizing: If a page from a comic is noticeably bigger or smaller than most pages (like a doublespread), resize accordingly.
+def GetNewDimensionsOfPage_Smart(img, oldMostCommonWidth, newWidth):
+    
+    #Case 1: this is a normally sized page (within 2% tolerance, some scanned pages have a few pixels off)
+    if (IsEqualOrClose(img.width , oldMostCommonWidth , 0.02)):
         resizeRatio = (newWidth/float(img.width))
+        newHeight = int((float(img.height)*float(resizeRatio)))
+    
+    #Case 2: this is a double-page, a crop, or any other size related exception
+    else:
+        resizeRatio = newWidth / oldMostCommonWidth
+        newWidth  = int((float(img.width) *float(resizeRatio)))
         newHeight = int((float(img.height)*float(resizeRatio)))
 
     return(newWidth,newHeight)
+
+
+# Dumb resizing: Just resize every image to the width specified by the user.
+def GetNewDimensionsOfPage_Dumb(img, newWidth):
+    #Case 2: dumb resizing, always resize to width specified by user
+    resizeRatio = (newWidth/float(img.width))
+    newHeight = int((float(img.height)*float(resizeRatio)))
+    return(newWidth,newHeight)
+
+
 
 
 
@@ -130,6 +147,7 @@ def GetMostCommonWidth(imgList):
     #Return most common width
     mostCommonWidth = max(widthsCount, key=widthsCount.get)
     return(mostCommonWidth)
+
 
 
 

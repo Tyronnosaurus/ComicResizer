@@ -28,7 +28,7 @@ def ResizeComic(filePath, newWidth, settings):
 
     # For a standalone image, just resize it
     elif (IsImage(filePath)):
-        Resizer.ResizeSingleImage(filePath, 0, newWidth, settings, partOfAComic=False)
+        Resizer.ResizeSingleImage(filePath, newWidth, settings)
 
     # For everything else, show an error listing which files are valid
     else:
