@@ -37,7 +37,13 @@ def CleanPath(path):
 
 # Given a compressed file's path, generates a suitable name for a temporal folder in which to extract its files
 def GetTempFolder(filePath):
-    return(os.path.splitext(filePath)[0]) #Same name as original filename, but without extension
+    folderName = os.path.splitext(filePath)[0] #Same name as original filename, but without extension
+    
+    # Windows can't name a folder with trailing periods. If the filename had trailing periods, we have to ignore them.
+    # This edge case happens when a comic's title ends with an ellipsis: 'Once upon a time in....zip', for example
+    folderName = folderName.rstrip('.')
+    
+    return(folderName)
 
 
 
