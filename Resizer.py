@@ -95,32 +95,46 @@ def ResizeSingleImage(imgPath, newWidth, settings):
 
 
 
-## Auxiliar methods ########################################################################
+## Smart resizing ########################################################################
 
 
-# Calculate new dimensions.
-def GetNewDimensionsOfPage(img, oldMostCommonWidth, newWidth, settings, partOfAComic):
+# Calculate new dimensions. This is done for every page. Most will get resized to the user-specified goal width, but some will require different scaling rules
+def GetNewDimensionsOfPage(img, oldMostCommonWidth, goalWidth, settings, partOfAComic):
 
-    if (settings.smartResize.get() and partOfAComic): return( GetNewDimensionsOfPage_Smart(img, oldMostCommonWidth, newWidth) )
-    else:                                             return( GetNewDimensionsOfPage_Dumb(img, newWidth) )
+    if (settings.smartResize.get() and partOfAComic): return( GetNewDimensionsOfPage_Smart(img, oldMostCommonWidth, goalWidth) )
+    else:                                             return( GetNewDimensionsOfPage_Dumb(img, goalWidth) )
 
 
 #Smart resizing: If a page from a comic is noticeably bigger or smaller than most pages (like a doublespread), resize accordingly.
-def GetNewDimensionsOfPage_Smart(img, oldMostCommonWidth, newWidth):
+def GetNewDimensionsOfPage_Smart(img, oldMostCommonWidth, goalWidth):
     
-    #Case 1: this is a normally sized page (within 2% tolerance, some scanned pages have a few pixels off)
-    if (IsEqualOrClose(img.width , oldMostCommonWidth , 0.02)):
-        resizeRatio = (newWidth/float(img.width))
-        newHeight = int((float(img.height)*float(resizeRatio)))
+    # Case 1: this is a normally sized page 
+    if (PageIsNormallySized(img, oldMostCommonWidth)):
+        (newWidth,newHeight) = GetNewDimensionsOfPage_Dumb(img, goalWidth)
     
-    #Case 2: this is a double-page, a crop, or any other size related exception
-    else:
-        resizeRatio = newWidth / oldMostCommonWidth
+
+    # Case 2: larger than most pages. Example: doublepages, wallpapers...
+    elif (img.width > oldMostCommonWidth):
+        resizeRatio = goalWidth / oldMostCommonWidth
         newWidth  = int((float(img.width) *float(resizeRatio)))
         newHeight = int((float(img.height)*float(resizeRatio)))
 
+
+    # Case 3: smaller than most pages. Example: croppings, translator's credits at the end...
+    else:
+        # If it's already smaller than the goal width, do not scale at all (or else we end up with microscopic images)
+        if (img.width<=img.width):  (newWidth,newHeight) = (img.width, img.height)
+        
+        # If it's larger than the goal width, scale down to the goal width, and no more
+        else:                       (newWidth,newHeight) = GetNewDimensionsOfPage_Dumb(img, goalWidth)
+
+
     return(newWidth,newHeight)
 
+
+
+
+## Auxiliar methods ########################################################################
 
 # Dumb resizing: Just resize every image to the width specified by the user.
 def GetNewDimensionsOfPage_Dumb(img, newWidth):
@@ -165,3 +179,10 @@ def RemoveAlpha(image):
     if (image.mode in ("RGBA", "P", "LA")):
         image = image.convert("RGB")
     return(image)
+
+
+
+# Returns True if page is normally sized (has the same dimensions as most other pages)
+# (within 2% tolerance because some scanned pages tend to be a few pixels off)
+def PageIsNormallySized(img, oldMostCommonWidth):
+    return( IsEqualOrClose(img.width , oldMostCommonWidth , 0.02) )
