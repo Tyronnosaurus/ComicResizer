@@ -1,6 +1,6 @@
 import os
 from PIL import Image
-from Misc import IsEqualOrClose, IsImage, AddFileExistsIndex, GetTempFolder
+from Misc import IsEqualOrClose, IsImage, IsArchive, AddFileExistsIndex, GetTempFolder
 import Compression
 from send2trash import send2trash   #pip install Send2Trash
 import shutil
@@ -33,6 +33,25 @@ def ResizeArchive(filePath, newWidth, settings):
 
 
 
+# Resizes everything in a folder and subfolders:
+# - If folder has images, resizes them (treating all images in each folder as one comic)
+# - If folder has archives, resizes them
+# - If folder has subfolders, repeats the process recursively
+# A folder can have more than one of the previous items mixed in.
+def ResizeFolderRecursively(topFolder, newWidth, settings):
+    for folderName, _ , filenames in os.walk(topFolder):
+        # Resize images in current folder
+        filePaths = [x for x in filenames if IsImage(x)]
+        if (len(filePaths)>0):
+            filePaths = AttachPathToFilenameList(folderName, filenames) # The list of files must contain full paths, not just filenames
+            ResizeImageList(filePaths, newWidth, settings)              # Inside each folder, make a list of files and process it
+
+        # Resize archives in current folder
+        filePaths = [x for x in filenames if IsArchive(x)]
+        for file in filePaths:
+            file = os.path.join(folderName,file) #Must contain full paths, not just filenames
+            ResizeArchive(file)
+
 
 # Resize images in folder (and subfolders, treating each as a different comic).
 # This is because some times comics come in different folders inside the same archive (e.g. chapters inside a volume, with chapters having different resolutions)
@@ -48,7 +67,7 @@ def ResizeImagesInFolder(topFolder, newWidth, settings):
 # Resizes images in a list of images
 def ResizeImageList(imageList , newWidth, settings):
 
-    oldWidth = GetMostCommonWidth(imageList)
+    oldWidth = GetMostCommonWidth(imageList) if settings.smartResize.get() else 0
     
     for imgFile in imageList:
         if IsImage(imgFile):

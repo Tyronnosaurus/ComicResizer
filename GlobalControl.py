@@ -18,21 +18,16 @@ def ResizeComic(filePath, newWidth, settings):
     
 
     # For compressed files, we extract contents to a temp folder, resize them as a comic, and compress them back
-    if (IsArchive(filePath)):
-        Resizer.ResizeArchive(filePath, newWidth, settings)
-        
+    if (IsArchive(filePath)):   Resizer.ResizeArchive(filePath, newWidth, settings)
 
-    # For a folder, resize the images inside (together, as a comic)
-    elif (IsFolder(filePath)): #For folders, 
-        Resizer.ResizeImagesInFolder(filePath, newWidth, settings)
+    # For a folder, resize everything in it and its subfolders recursively
+    elif (IsFolder(filePath)):  Resizer.ResizeFolderRecursively(filePath, newWidth, settings)
 
     # For a standalone image, just resize it
-    elif (IsImage(filePath)):
-        Resizer.ResizeSingleImage(filePath, newWidth, settings)
+    elif (IsImage(filePath)):   Resizer.ResizeSingleImage(filePath, newWidth, settings)
 
     # For everything else, show an error listing which files are valid
-    else:
-        ShowInvalidSourceError()
+    else:                       ShowInvalidSourceError()
         
 
     if (settings.closeWhenFinished.get()): sys.exit(0)  #Exit application (if option selected)
