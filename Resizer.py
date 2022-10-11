@@ -127,6 +127,10 @@ def GetNewDimensionsOfPage(img, oldMostCommonWidth, goalWidth, settings, partOfA
 #Smart resizing: If a page from a comic is noticeably bigger or smaller than most pages (like a doublespread), resize accordingly.
 def GetNewDimensionsOfPage_Smart(img, oldMostCommonWidth, goalWidth):
     
+    # Do not resize if it's already the goal size
+    if (IsEqualOrClose(img.width , goalWidth , 0.02)):
+        (newWidth,newHeight) = (img.width,img.height)
+
     # Case 1: this is a normally sized page 
     if (PageIsNormallySized(img, oldMostCommonWidth)):
         (newWidth,newHeight) = GetNewDimensionsOfPage_Dumb(img, goalWidth)
