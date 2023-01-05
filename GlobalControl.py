@@ -29,7 +29,7 @@ def ResizeComic(filePath, newWidth, settings):
     else:                       ShowInvalidSourceError()
         
 
-    if (settings.closeWhenFinished.get()): sys.exit(0)  #Exit application (if option selected)
+    if (settings.closeWhenFinished): sys.exit(0)  #Exit application (if option selected)
 
 
 
@@ -65,9 +65,9 @@ def ResizeAndCompress(filePath, newWidth, settings):
     
     if (IsArchive(filePath)):
         Resizer.ResizeImagesInFolder(tempFolder, newWidth, settings)
-        if (settings.deleteOriginal.get()): send2trash(filePath)    #Send original file to trash (if option selected)
+        if (settings.deleteOriginal): send2trash(filePath)    #Send original file to trash (if option selected)
         Compression.Zip(tempFolder, filePath)
-        if (settings.deleteTemp.get()): shutil.rmtree(tempFolder)   #Delete temp directory (if option selected)
+        if (settings.deleteTemp): shutil.rmtree(tempFolder)   #Delete temp directory (if option selected)
 
-    if (settings.closeWhenFinished.get()): sys.exit(0)  #Exit application (if option selected)
+    if (settings.closeWhenFinished): sys.exit(0)  #Exit application (if option selected)
  

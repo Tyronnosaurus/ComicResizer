@@ -25,11 +25,11 @@ def ResizeArchive(filePath, newWidth, settings):
     if (os.path.getsize(filePath+'.temp') > os.path.getsize(filePath)):     # If resulting compressed file is larger, keep original
         send2trash(filePath+'.temp')
     else:                                                                   # Otherwise, keep the new resized one. 
-        if (settings.deleteOriginal.get()): send2trash(filePath)   # Delete original (if option selected)
+        if (settings.deleteOriginal): send2trash(filePath)   # Delete original (if option selected)
         os.rename(filePath+'.temp' , AddFileExistsIndex(filePath)) # Remove '.temp' suffix
 
     #Delete temp directory (if option selected)
-    if (settings.deleteTemp.get()): shutil.rmtree(tempFolder)
+    if (settings.deleteTemp): shutil.rmtree(tempFolder)
 
 
 
@@ -67,7 +67,7 @@ def ResizeImagesInFolder(topFolder, newWidth, settings):
 # Resizes images in a list of images
 def ResizeImageList(imageList , newWidth, settings):
 
-    oldWidth = GetMostCommonWidth(imageList) if settings.smartResize.get() else 0
+    oldWidth = GetMostCommonWidth(imageList) if settings.smartResize else 0
     
     for imgFile in imageList:
         if IsImage(imgFile):
@@ -84,7 +84,7 @@ def ResizeImageInComic(imgPath, oldMostCommonWidth, newWidth, settings, partOfAC
         (newWidth,newHeight) = GetNewDimensionsOfPage(img, oldMostCommonWidth, newWidth, settings, partOfAComic)
 
         # Apply changes
-        if (not (settings.onlyReduce.get() and newWidth>=img.width)):      # Option: Do not increase size, only reduce
+        if (not (settings.onlyReduce and newWidth>=img.width)):      # Option: Do not increase size, only reduce
             img = img.resize((newWidth,newHeight), Image.ANTIALIAS)
             hasChanged = True
 
@@ -100,7 +100,7 @@ def ResizeImageInComic(imgPath, oldMostCommonWidth, newWidth, settings, partOfAC
             if (imgPath != newImgPath):     # If resized image keeps the same extension, do not delete original. It has been replaced already and we would delete the resized image
                 # Case 1: It's part of a comic, and inside of a temp folder. Delete it always or it will get included in the contents of the zip
                 # Case 2: 'Delete Original' checkbox selected. Also delete always, even if it is a standalone image (not part of a comic)
-                if (partOfAComic or settings.deleteOriginal.get()):
+                if (partOfAComic or settings.deleteOriginal):
                     os.remove(imgPath)
 
 
@@ -120,8 +120,8 @@ def ResizeSingleImage(imgPath, newWidth, settings):
 # Calculate new dimensions. This is done for every page. Most will get resized to the user-specified goal width, but some will require different scaling rules
 def GetNewDimensionsOfPage(img, oldMostCommonWidth, goalWidth, settings, partOfAComic):
 
-    if (settings.smartResize.get() and partOfAComic): return( GetNewDimensionsOfPage_Smart(img, oldMostCommonWidth, goalWidth) )
-    else:                                             return( GetNewDimensionsOfPage_Dumb(img, goalWidth) )
+    if (settings.smartResize and partOfAComic): return( GetNewDimensionsOfPage_Smart(img, oldMostCommonWidth, goalWidth) )
+    else:                                       return( GetNewDimensionsOfPage_Dumb(img, goalWidth) )
 
 
 #Smart resizing: If a page from a comic is noticeably bigger or smaller than most pages (like a doublespread), resize accordingly.
