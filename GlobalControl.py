@@ -7,16 +7,15 @@ import tkinter.messagebox
 from send2trash import send2trash   #pip install Send2Trash
 import shutil
 
-'''------------------------------------'''
-'''Controls high level application flow'''
-'''------------------------------------'''
 
-#User pressed 'Resize' button: do the whole process (extract, resize, compress)
+""" Backend with many high level functions to choose which resizing operations to apply """
+
+
 def ResizeComic(filePath, newWidth, settings):
+    """ Chooses the correct resizing method depending on the source's type (compressed file, folder, image...) """
     
     filePath = CleanPath(filePath)
     
-
     # For compressed files, we extract contents to a temp folder, resize them as a comic, and compress them back
     if (IsArchive(filePath)):   Resizer.ResizeArchive(filePath, newWidth, settings)
 
@@ -35,18 +34,19 @@ def ResizeComic(filePath, newWidth, settings):
 
 
 
-# Show an error popup listing which files are valid
 def ShowInvalidSourceError():
+    """ Show an error popup listing which files are valid """
+    
     tkinter.messagebox.showinfo(title='Source not valid',
                                 message='Valid files are:\n Archives (zip, rar, cbz, cbr)\n Folders\n Single images')
        
 
 
 ## User can use the 2 small 'Substep' buttons to do the resizing in two phases and preview images before resizing
-## (and delete or edit any image if desired). Only useful for compressed files, not folders or imagelists.
+## (and delete or edit any image if desired). Only useful for compressed files, not folders or images.
 
-#Substep 1: Extract to temp folder and show this folder in explorer
 def ExtractAndPreview(filePath, settings):
+    """ Substep 1: Extract to temp folder and show this folder in explorer """
     filePath = CleanPath(filePath)
     tempFolder = GetTempFolder(filePath)
 
@@ -58,8 +58,8 @@ def ExtractAndPreview(filePath, settings):
         tkinter.messagebox.showinfo(title='Nothing to extract', message='Selected source is not a compressed file, so no extraction will be done.')
 
 
-#Substep 2: Do the rest of the operations
 def ResizeAndCompress(filePath, newWidth, settings):
+    """ Substep 2: Do the rest of the operations (resizing, compression and cleanup) """
     filePath = CleanPath(filePath)
     tempFolder = GetTempFolder(filePath)
     
