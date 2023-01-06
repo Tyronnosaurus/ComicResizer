@@ -1,7 +1,5 @@
 import os
 import sys
-import tkinter as tk
-from tkinter import filedialog
 
 
 
@@ -13,14 +11,6 @@ def GetArgument():
     else:
         return('')           #Started application directly -> No arguments
 
-
-
-# Open dialog to select file and put it in the path field
-def OpenFileDialog(pathTextBox):
-    desktopPath = os.path.expanduser('~') + "/desktop"
-    filePath = tk.filedialog.askopenfilename( initialdir=desktopPath , title="Select file" , filetypes=( ("Zip files","*.zip") , ("All files","*.*") ) )
-    pathTextBox.delete(0, tk.END) # Delete any previous contents
-    pathTextBox.insert(0, filePath)
 
 
 
