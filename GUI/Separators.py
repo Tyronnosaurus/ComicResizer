@@ -2,9 +2,9 @@ from PySide6.QtWidgets import QFrame
 
 
 
-""" A simple horizontal line so separate sections """
 class HorizontalLineSeparator(QFrame):
-
+    """ A simple horizontal line so separate sections """
+    
     def __init__(self):
         super().__init__()
         
