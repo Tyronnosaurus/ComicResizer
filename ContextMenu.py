@@ -1,62 +1,52 @@
 
-# http://support.microsoft.com/kb/310516    #How to edit registry with regedit files
+import sys
+import winreg
 
-import sys, os
+
+def set_reg(reg_path, name, value):
+    try:
+        winreg.CreateKey(winreg.HKEY_CURRENT_USER, reg_path)
+        registry_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, reg_path, 0, winreg.KEY_WRITE)
+        winreg.SetValueEx(registry_key, name, 0, winreg.REG_SZ, value) # Type REG_SZ means null-terminated string
+        winreg.CloseKey(registry_key)
+        return(True)
+    except WindowsError as e:
+        print(str(e))
+        return(False)
 
 
-ARG='''Windows Registry Editor Version 5.00
 
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.zip\shell]
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.zip\shell\ComicResizer]
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.zip\shell\ComicResizer\command]
-@="py APP_PATH \\\"%1\\\""
+def get_reg(reg_path, name):
+    try:
+        registry_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, reg_path, 0, winreg.KEY_READ)
+        value, regtype = winreg.QueryValueEx(registry_key, name)
+        winreg.CloseKey(registry_key)
+        return(value)
+    except WindowsError as e:
+        print(str(e))
+        return(None)
 
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.RAR\shell]
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.RAR\shell\ComicResizer]
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.RAR\shell\ComicResizer\command]
-@="py APP_PATH \\\"%1\\\""
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.cbz\shell]
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.cbz\shell\ComicResizer]
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.cbz\shell\ComicResizer\command]
-@="py APP_PATH \\\"%1\\\""
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.cbr\shell]
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.cbr\shell\ComicResizer]
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.cbr\shell\ComicResizer\command]
-@="py APP_PATH \\\"%1\\\""
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell]
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\ComicResizer]
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\ComicResizer\command]
-@="py APP_PATH \\\"%1\\\""
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\image\shell]
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\image\shell\ComicResizer]
-[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\image\shell\ComicResizer\command]
-@="py APP_PATH \\\"%1\\\""
-
-'''
 
 
 
 def AddToContextMenu():
-
-    #In the registry command, replace APP_PATH with the actual path this program is being run from
-    appPath = sys.argv[0]
-    arg = ARG.replace("APP_PATH", appPath)
-
-    #Generate path of reg file
-    path = os.path.dirname(appPath) + '/edits.reg'
-
-    #Create file
-    f = open(path, 'w')
-    f.write(arg)
-    f.close()
-
-    #Run file
-    cmdLine = 'regedit.exe ' + path
-    os.system(cmdLine)
-
-    #Delete regedit file
-    #TODO
+    """ Adds entries in context menus of many filetypes and folders to open them with this app """
+    
+    # name must be None so that the default key is modified. If we specified name="(Default)", it would create two (Default) keys.
+    # command must be in the format "program.exe %1" or "py pathToScript %1".
+    # In the Windows registry, %1 gets replaced by the path to the file whose context menu is opened
+    
+    appPath = sys.argv[0]   # path to this application. If it's a Python script, path to the entry point script
+    command = f'py "{appPath}" "%1"'
+    
+    set_reg(reg_path=r"SOFTWARE\Classes\SystemFileAssociations\.zip\shell\ComicResizer\command", name=None, value=command)
+    set_reg(reg_path=r"SOFTWARE\Classes\SystemFileAssociations\.rar\shell\ComicResizer\command", name=None, value=command)
+    set_reg(reg_path=r"SOFTWARE\Classes\SystemFileAssociations\.cbz\shell\ComicResizer\command", name=None, value=command)
+    set_reg(reg_path=r"SOFTWARE\Classes\SystemFileAssociations\.cbr\shell\ComicResizer\command", name=None, value=command)
+    
+    set_reg(reg_path=r"SOFTWARE\Classes\SystemFileAssociations\image\shell\ComicResizer\command", name=None, value=command)
+    
+    set_reg(reg_path=r"SOFTWARE\Classes\Directory\shell\ComicResizer\command", name=None, value=command)    # For when clicking a folder
+    set_reg(reg_path=r"SOFTWARE\Classes\Directory\Background\shell\ComicResizer\command", name=None, value=command)    # For when clicking a folder's background
+    
+    print("Added to context menu")

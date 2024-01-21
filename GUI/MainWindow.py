@@ -10,6 +10,7 @@ import atexit
 import GlobalControl
 
 import sys
+from ContextMenu import AddToContextMenu
 
 
 
@@ -170,4 +171,4 @@ class Contents(QWidget):
         
     
     def AddContextMenuItem(self):
-        pass
+        AddToContextMenu()
