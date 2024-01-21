@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QMessageBox
 from GUI.MainWindow import MainWindow
 import sys
 
@@ -8,7 +8,15 @@ def main():
 
     app = QApplication(sys.argv)
     w = MainWindow()
-    app.exec()
+    
+    try:
+        app.exec()
+        
+    except Exception as e:
+        dlg = QMessageBox()
+        dlg.setWindowTitle("Error")
+        dlg.setText(str(e))
+        dlg.exec()
 
 
 if __name__ == '__main__':
