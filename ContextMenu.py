@@ -47,6 +47,8 @@ def AddToContextMenu():
     set_reg(reg_path=r"SOFTWARE\Classes\SystemFileAssociations\image\shell\ComicResizer\command", name=None, value=command)
     
     set_reg(reg_path=r"SOFTWARE\Classes\Directory\shell\ComicResizer\command", name=None, value=command)    # For when clicking a folder
+    
+    command = f'py "{appPath}" "%V"'  # When context menu is opened from a folder's background, instead of %1 we use %V to get the folder's path
     set_reg(reg_path=r"SOFTWARE\Classes\Directory\Background\shell\ComicResizer\command", name=None, value=command)    # For when clicking a folder's background
     
     print("Added to context menu")
