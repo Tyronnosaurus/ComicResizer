@@ -9,6 +9,8 @@ import atexit
 
 import GlobalControl
 
+import sys
+
 
 
 class MainWindow(QMainWindow):
@@ -49,6 +51,7 @@ class Contents(QWidget):
         vLayout.addWidget(QLabel("Source"))
 
         self.srcLineEdit = DirectorySelector()
+        if (len(sys.argv)>1): self.srcLineEdit.setText(sys.argv[1]) # If opened from a context menu, automatically write the 2nd argument (path to file) in the src input
         vLayout.addWidget(self.srcLineEdit)
 
         hLayoutWidth = QHBoxLayout()
