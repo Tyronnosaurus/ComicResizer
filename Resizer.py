@@ -85,7 +85,7 @@ def ResizeImageInComic(imgPath, oldMostCommonWidth, newWidth, settings, partOfAC
 
         # Apply changes
         if (not (settings.onlyReduce and newWidth>=img.width)):      # Option: Do not increase size, only reduce
-            img = img.resize((newWidth,newHeight), Image.ANTIALIAS)
+            img = img.resize((newWidth,newHeight), Image.LANCZOS)
             hasChanged = True
 
         if ((os.path.splitext(imgPath)[1]) != '.jpg'):      # Check if format has to be changed
