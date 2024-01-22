@@ -8,7 +8,7 @@ from GUI.DirectorySelector import DirectorySelector
 import GlobalControl
 
 import sys
-from ContextMenu import AddToContextMenu
+from ContextMenu import AddToContextMenu, RemoveFromContextMenu
 
 
 
@@ -111,8 +111,11 @@ class Contents(QWidget):
 
         hLayoutBottom.addItem(QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Expanding))
 
-        pushButtonContexMenu = QPushButton("Add context\nmenu item")
-        hLayoutBottom.addWidget(pushButtonContexMenu)
+        pushButtonAddToContexMenu = QPushButton("Add context\nmenu item")
+        hLayoutBottom.addWidget(pushButtonAddToContexMenu)
+        
+        pushButtonRemoveFromContexMenu = QPushButton("Delete context\nmenu item")
+        hLayoutBottom.addWidget(pushButtonRemoveFromContexMenu)
 
         vLayout.addLayout(hLayoutBottom)
 
@@ -123,7 +126,8 @@ class Contents(QWidget):
         pushButtonResize.clicked.connect(self.Resize)
         pushButtonResize1.clicked.connect(self.ExtractAndPreview)
         pushButtonResize2.clicked.connect(self.ResizeAndCompress)
-        pushButtonContexMenu.clicked.connect(self.AddContextMenuItem)
+        pushButtonAddToContexMenu.clicked.connect(AddToContextMenu)
+        pushButtonRemoveFromContexMenu.clicked.connect(RemoveFromContextMenu)
         
         # Settings. Must be at the end (because at start, the checkboxes and other inputs still don't exist)
         self.load_settings()
@@ -170,10 +174,6 @@ class Contents(QWidget):
         self.settings.closeWhenFinished = self.checkBoxCloseWhenFinished.isChecked()
         
         
-    
-    def AddContextMenuItem(self):
-        AddToContextMenu()
-
 
 
     def load_settings(self):
