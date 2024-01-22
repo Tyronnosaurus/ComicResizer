@@ -7,6 +7,7 @@ from GUI.DirectorySelector import DirectorySelector
 
 import GlobalControl
 
+import os
 import sys
 from ContextMenu import AddToContextMenu, RemoveFromContextMenu
 
@@ -177,18 +178,19 @@ class Contents(QWidget):
 
 
     def load_settings(self):
-        settings = QSettings("settings.ini", QSettings.IniFormat)
-        
+        settings = QSettings(self.get_settings_filepath(), QSettings.IniFormat)
+
         self.widthLineEdit.setText(settings.value("Width", 1280, str))
         self.checkBoxDeleteOriginal.setChecked(settings.value("DeleteOriginal", True, bool))
         self.checkBoxDeleteTempFolder.setChecked(settings.value("DeleteTempFolder", True, bool))
         self.checkBoxSmartResizing.setChecked(settings.value("SmartResizing", True, bool))
         self.checkBoxOnlyReduce.setChecked(settings.value("OnlyReduce", True, bool))
         self.checkBoxCloseWhenFinished.setChecked(settings.value("CloseWhenFinished", False, bool))
+
         
 
     def save_settings(self):
-        settings = QSettings("settings.ini", QSettings.IniFormat)
+        settings = QSettings(self.get_settings_filepath(), QSettings.IniFormat)
         
         settings.setValue("Width", self.widthLineEdit.text())
         settings.setValue("DeleteOriginal", self.checkBoxDeleteOriginal.isChecked())
@@ -196,3 +198,9 @@ class Contents(QWidget):
         settings.setValue("SmartResizing", self.checkBoxSmartResizing.isChecked())
         settings.setValue("OnlyReduce", self.checkBoxOnlyReduce.isChecked())
         settings.setValue("CloseWhenFinished", self.checkBoxCloseWhenFinished.isChecked())
+        
+        
+    def get_settings_filepath(self) -> str:
+        app_path = sys.argv[0]   # path to this application. If it's a Python script, path to the entry point script
+        app_path = os.path.dirname(app_path)   # The path contains the script file, but we only want the directory
+        return(os.path.join(app_path, "settings.ini"))
