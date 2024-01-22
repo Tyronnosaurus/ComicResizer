@@ -1,11 +1,9 @@
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QCheckBox, QPushButton, QSpacerItem, QSizePolicy
 from PySide6.QtCore import QSettings
+from PySide6.QtGui import QCloseEvent
 
 from GUI.Separators import HorizontalLineSeparator
 from GUI.DirectorySelector import DirectorySelector
-
-from Settings import Settings_class
-import atexit
 
 import GlobalControl
 
@@ -20,19 +18,21 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         
-        # Settings
-        self.settings = Settings_class()    #This object holds user settings
-        self.settings.Load()                #Load settings saved in an external file (Config.ini)
-        atexit.register(self.settings.Save) #Set settings.Save() to run when program is closed
-        
         # Window configuration
         self.setWindowTitle('Comic resizer')
         
         # Window contents
-        contents = Contents(self)
-        self.setCentralWidget(contents)
+        self.contents = Contents(self)
+        self.setCentralWidget(self.contents)
         
         self.show()
+        
+        
+        
+    def closeEvent(self, event: QCloseEvent):
+        """ Override QMainWindow's closeEvent to save settings on exit """
+        self.contents.save_settings()
+        
 
 
 
@@ -42,8 +42,6 @@ class Contents(QWidget):
     
     def __init__(self, parent):
         super().__init__(parent)
-
-        self.settings: Settings_class = self.parent().settings
 
 
         # ---- Source path & desired width ---
@@ -127,6 +125,9 @@ class Contents(QWidget):
         pushButtonResize2.clicked.connect(self.ResizeAndCompress)
         pushButtonContexMenu.clicked.connect(self.AddContextMenuItem)
         
+        # Settings. Must be at the end (because at start, the checkboxes and other inputs still don't exist)
+        self.load_settings()
+    
     
     
     def Resize(self) -> None:
@@ -172,3 +173,26 @@ class Contents(QWidget):
     
     def AddContextMenuItem(self):
         AddToContextMenu()
+
+
+
+    def load_settings(self):
+        settings = QSettings("settings.ini", QSettings.IniFormat)
+        
+        self.widthLineEdit.setText(settings.value("Width", 1280, str))
+        self.checkBoxDeleteOriginal.setChecked(settings.value("DeleteOriginal", True, bool))
+        self.checkBoxDeleteTempFolder.setChecked(settings.value("DeleteTempFolder", True, bool))
+        self.checkBoxSmartResizing.setChecked(settings.value("SmartResizing", True, bool))
+        self.checkBoxOnlyReduce.setChecked(settings.value("OnlyReduce", True, bool))
+        self.checkBoxCloseWhenFinished.setChecked(settings.value("CloseWhenFinished", False, bool))
+        
+
+    def save_settings(self):
+        settings = QSettings("settings.ini", QSettings.IniFormat)
+        
+        settings.setValue("Width", self.widthLineEdit.text())
+        settings.setValue("DeleteOriginal", self.checkBoxDeleteOriginal.isChecked())
+        settings.setValue("DeleteTempFolder", self.checkBoxDeleteTempFolder.isChecked())
+        settings.setValue("SmartResizing", self.checkBoxSmartResizing.isChecked())
+        settings.setValue("OnlyReduce", self.checkBoxOnlyReduce.isChecked())
+        settings.setValue("CloseWhenFinished", self.checkBoxCloseWhenFinished.isChecked())
