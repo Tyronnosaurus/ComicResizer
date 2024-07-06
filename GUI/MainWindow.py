@@ -26,9 +26,6 @@ class MainWindow(QMainWindow):
         self.contents = Contents(self)
         self.setCentralWidget(self.contents)
         
-        self.show()
-        
-        
         
     def closeEvent(self, event: QCloseEvent):
         """ Override QMainWindow's closeEvent to save settings on exit """

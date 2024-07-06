@@ -7,7 +7,8 @@ def main():
     """ Entry point of the application """
 
     app = QApplication(sys.argv)
-    w = MainWindow()
+    window = MainWindow()
+    window.show()
     
     try:
         app.exec()
