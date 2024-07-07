@@ -5,6 +5,7 @@ from GUI.Separators import HorizontalLineSeparator
 from GUI.DirectorySelector import DirectorySelector
 
 import GlobalControl
+from Settings import Settings
 
 import os
 import sys
@@ -139,17 +140,18 @@ class MainContents(QWidget):
     
         
     def prepareSettingsObject(self):
-        """ Get all user settings from the GUI into a single 'settings' object """
+        """ Get all user settings from the GUI into a single 'settings' object, which we'll use during the resizing process rather than checking the inputs, which could change. """
+        self.settings = Settings()
         self.settings.deleteOriginal    = self.checkBoxDeleteOriginal.isChecked()
         self.settings.deleteTemp        = self.checkBoxDeleteTempFolder.isChecked()
         self.settings.smartResize       = self.checkBoxSmartResizing.isChecked()
         self.settings.onlyReduce        = self.checkBoxOnlyReduce.isChecked()
         self.settings.closeWhenFinished = self.checkBoxCloseWhenFinished.isChecked()
         
-        
 
 
     def load_settings(self):
+        """ Configures every input according to previously saved settings """
         settings = QSettings(self.get_settings_filepath(), QSettings.IniFormat)
 
         self.widthLineEdit.setText(settings.value("Width", 1280, str))
@@ -158,10 +160,10 @@ class MainContents(QWidget):
         self.checkBoxSmartResizing.setChecked(settings.value("SmartResizing", True, bool))
         self.checkBoxOnlyReduce.setChecked(settings.value("OnlyReduce", True, bool))
         self.checkBoxCloseWhenFinished.setChecked(settings.value("CloseWhenFinished", False, bool))
-
         
 
     def save_settings(self):
+        """ Takes the state of every input and stores it on disk """
         settings = QSettings(self.get_settings_filepath(), QSettings.IniFormat)
         
         settings.setValue("Width", self.widthLineEdit.text())
