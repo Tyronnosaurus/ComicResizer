@@ -14,8 +14,8 @@ def ResizeArchive(filePath, newWidth, settings):
     tempFolder = GetTempFolder(filePath)
     Compression.Extract(filePath, tempFolder)
 
-    # Resize all images inside
-    ResizeImagesInFolder(tempFolder, newWidth, settings)
+    # Resize all images inside, folder by folder
+    ResizeFolderRecursively(tempFolder, newWidth, settings)
     
     # Compress back
     # Add a '.temp' suffix because the original still exists (we still don't know which to keep)
