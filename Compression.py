@@ -16,7 +16,7 @@ def Unrar(filePath , destinationPath):
     rf.close()
 
 def Extract(filePath , destinationPath):
-    print("Extracting...", end =" ", flush=True)
+    print("Extracting...")
     ext = (os.path.splitext(filePath)[1])
     if (ext == '.zip'):
         Unzip(filePath , destinationPath)
@@ -26,7 +26,7 @@ def Extract(filePath , destinationPath):
 
 
 def Zip(contentsPath , filePath):
-    print('Compressing...', end =' ', flush=True)
+    print('Compressing...')
     newFilePath = filePath.replace('.rar','.zip')   #Program only supports zip
     newFilepath = AddFileExistsIndex(newFilePath)   #Add '(2)' or higher suffix if necessary
 

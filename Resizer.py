@@ -22,11 +22,11 @@ def ResizeArchive(filePath, newWidth, settings):
     Compression.Zip(tempFolder, filePath+'.temp')
 
     # Decide wheter to keep the original, the resized, or both
-    if (os.path.getsize(filePath+'.temp') > os.path.getsize(filePath)):     # If resulting compressed file is larger, keep original
-        send2trash(filePath+'.temp')
+    if (os.path.getsize(filePath + '.temp') > os.path.getsize(filePath)):     # If resulting compressed file is larger, keep original
+        send2trash(filePath + '.temp')
     else:                                                                   # Otherwise, keep the new resized one. 
         if (settings.deleteOriginal): send2trash(filePath)   # Delete original (if option selected)
-        os.rename(filePath+'.temp' , AddFileExistsIndex(filePath)) # Remove '.temp' suffix
+        os.rename(filePath + '.temp' , AddFileExistsIndex(filePath)) # Remove '.temp' suffix
 
     #Delete temp directory (if option selected)
     if (settings.deleteTemp): shutil.rmtree(tempFolder)
@@ -39,6 +39,7 @@ def ResizeArchive(filePath, newWidth, settings):
 # - If folder has subfolders, repeats the process recursively
 # A folder can have more than one of the previous items mixed in.
 def ResizeFolderRecursively(topFolder, newWidth, settings):
+    print("Resizing folder: " + topFolder)
     for folderName, _ , filenames in os.walk(topFolder):
         # Resize images in current folder
         filePaths = [x for x in filenames if IsImage(x)]
@@ -56,7 +57,9 @@ def ResizeFolderRecursively(topFolder, newWidth, settings):
 # Resize images in folder (and subfolders, treating each as a different comic).
 # This is because some times comics come in different folders inside the same archive (e.g. chapters inside a volume, with chapters having different resolutions)
 def ResizeImagesInFolder(topFolder, newWidth, settings):
-    print("Resizing...", end =" ", flush=True)
+    
+    print("Resizing...")
+
     for folderName, _ , filenames in os.walk(topFolder):  # Traverse whole tree. In each folder, we get a list of filenames. The '_' holds list of subdirectories, which is unused
         filePaths = AttachPathToFilenameList(folderName, filenames) # The list of files must contain full paths, not just filenames
         ResizeImageList(filePaths, newWidth, settings)              # Inside each folder, make a list of files and process it

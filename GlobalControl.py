@@ -53,7 +53,7 @@ def ExtractAndPreview(filePath, settings):
     if (IsArchive(filePath)):
         Compression.Extract(filePath, tempFolder)
         os.startfile(tempFolder)
-        print("Previewing...", end =" ", flush=True)
+        print("Previewing...")
     else:
         tkinter.messagebox.showinfo(title='Nothing to extract', message='Selected source is not a compressed file, so no extraction will be done.')
 
